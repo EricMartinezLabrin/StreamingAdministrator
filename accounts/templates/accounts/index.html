@@ -1,0 +1,14 @@
+{% load static %}
+<form method="POST">
+    {% csrf_token %}
+    {% if  form.errors %}
+        <p><strong>Usuario o contraseña incorrecto</strong></p>
+    {% endif %}
+
+    {{ form.username }}  
+    {{ form.password }}   
+
+    {% comment %} <input type="text" name="username">
+    <input type="password" name="password"> {% endcomment %}
+    <input type="submit" value="Login">
+</form>
