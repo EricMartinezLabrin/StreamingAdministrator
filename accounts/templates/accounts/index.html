@@ -2,7 +2,11 @@
 <form method="POST">
     {% csrf_token %}
     {% if  form.errors %}
-        <p><strong>Usuario o contraseña incorrecto</strong></p>
+        <p><strong>Usuario o contraseña incorrecto, porfavor vuelve a inentarlo</strong></p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+    Bienvenido {{user.first_name}} {{user.last_name}} <br>
     {% endif %}
 
     {{ form.username }}  

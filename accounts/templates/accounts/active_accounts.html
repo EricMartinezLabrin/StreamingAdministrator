@@ -1,0 +1,47 @@
+{% load static %}
+{% if not active_accounts %}
+    <p><strong>No Hay Cuentas Disponibles</strong></p>
+{% else %}
+
+
+    <h1>Cuentas</h1>
+<table>
+    <tr>
+        <th>Cuenta</th>
+        <th>Creación Cuenta</th>
+        <th>Vencimiento Cuenta</th>
+        <th>Creador por:</th>
+        <th>Modificado por:</th>
+        <th>Banco</th>
+        <th>Titular</th>
+        <th>E-Mail</th>
+        <th>Clave</th>
+        <th>Vencimiento Cliente</th>
+        <th>Cliente</th>
+        <th>Perfil</th>
+        <th>Pin</th>
+        <th>Vendedor</th>
+        <th>Comentarios</th>
+        <th>Comentarios</th>
+    </tr>
+    {% for active in active_accounts %}
+    <tr>
+        <td>{{active.account_name_id}}</td>
+        <td>{{active.created_at}}</td>
+        <td>{{active.expiration_date}}</td>
+        <td>{{active.created_by}}</td>
+        <td>{{active.modified_by}}</td>
+        <td></td>
+        <td></td>
+        <td>{{active.email}}</td>
+        <td>{{active.password}}</td>
+        <td>{{active.customer_id.expiration_date}}</td>
+        <td>{{active.customer_id.phone}}</td>
+        <td>{{active.profile}}</td>
+        <td>{{active.pin}}</td>
+        <td></td>
+        <td>{{active.comments}}</td>
+    </tr>
+    {% endfor %}
+</table>
+    {% endif %}

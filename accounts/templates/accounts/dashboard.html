@@ -1,1 +1,7 @@
-<p>hola</p>
+{% load static %}
+<p>hola {{ user.first_name}}</p>
+
+<a href="{% url 'accounts:logout' %}">Cerrar Sesión</a>
+<a href="{% url 'accounts:list_account' %}">Ver Cuentas Activas</a>
+
+
