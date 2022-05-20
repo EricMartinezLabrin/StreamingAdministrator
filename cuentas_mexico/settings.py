@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'sistema_cuentas_mexico',
         'USER': 'root',
-        'PASSWORD': 'Tarkan11.-!!',
+        'PASSWORD': 'tarkan11',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -133,3 +133,5 @@ LOGIN_REDIRECT_URL = reverse_lazy("accounts:dashboard")
 LOGOUT_REDIRECT_URL = reverse_lazy("accounts:index")
 
 LOGIN_URL = reverse_lazy("accounts:index")
+
+# DATETIME_FORMAT = "d - M - y"

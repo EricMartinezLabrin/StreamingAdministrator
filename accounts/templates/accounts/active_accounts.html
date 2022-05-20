@@ -1,8 +1,9 @@
 {% load static %}
-{% if not active_accounts %}
+{% if not accounts %}
     <p><strong>No Hay Cuentas Disponibles</strong></p>
 {% else %}
 
+<p>la id de la cuenta es {{esomismo}}</p>
 
     <h1>Cuentas</h1>
 <table>
@@ -12,34 +13,35 @@
         <th>Vencimiento Cuenta</th>
         <th>Creador por:</th>
         <th>Modificado por:</th>
-        <th>Banco</th>
-        <th>Titular</th>
+        <th>Proveedor</th>
         <th>E-Mail</th>
         <th>Clave</th>
-        <th>Vencimiento Cliente</th>
-        <th>Cliente</th>
+        <th>Estado</th>
         <th>Perfil</th>
         <th>Pin</th>
-        <th>Vendedor</th>
         <th>Comentarios</th>
-        <th>Comentarios</th>
+        <th>Acciones</th>
     </tr>
-    {% for active in active_accounts %}
+    {% for active in accounts %}
     <tr>
         <td>{{active.account_name_id}}</td>
-        <td>{{active.created_at}}</td>
-        <td>{{active.expiration_date}}</td>
+        <td>{{active.created_at|date:"d-M-Y"}}</td>
+        <td>{{active.expiration_date|date:"d-M-Y"}}</td>
         <td>{{active.created_by}}</td>
         <td>{{active.modified_by}}</td>
-        <td></td>
-        <td></td>
+        <td>{{active.supplier}}</td>
         <td>{{active.email}}</td>
         <td>{{active.password}}</td>
-        <td>{{active.customer_id.expiration_date}}</td>
-        <td>{{active.customer_id.phone}}</td>
+        <td>
+            {% comment %} Show Disponible if account is unnasigned to a Customer or Ocupado if account is Asigned to a Customer {% endcomment %}
+            {% if  active.customer_id == Null %}
+            <p>Disponible</p>
+            {% else %}
+            <p>Ocupado</p>
+            {% endif %}
+        </td>
         <td>{{active.profile}}</td>
         <td>{{active.pin}}</td>
-        <td></td>
         <td>{{active.comments}}</td>
     </tr>
     {% endfor %}
