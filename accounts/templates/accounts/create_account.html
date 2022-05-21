@@ -2,7 +2,7 @@
 <p><strong>{{error_message}}</strong></p>
 {% endif %}
 
-<h1>Actual business is {{user.id}}</h1>
+<h1>Actual business is {{user.userdetail.business_id}}</h1>
 
 <form method="post">
     {% csrf_token %}
@@ -35,36 +35,9 @@
         <span>{{form.comments.label }}</span>
         {{form.comments }}
     </label>
-    <input type="hidden" value={{user.id}} name="business">
-    <input type="hidden" value={{user.id}} name="created_by">
-    <input type="hidden" value={{user.id}} name="modified_by">
+    <input type="hidden" value="{{user.userdetail.business_id}}" name="business">
+    <input type="hidden" value="{{user.id}}" name="created_by">
+    <input type="hidden" value="{{user.id}}" name="modified_by">
     <input type="hidden" value="1" name="profile">
     <input type="submit" value="Terminar">
 </form>
-   
-    {% comment %} 
-        <label for="sent">
-        <span>{{form.sent.label }}</span>
-        {{form.sent }}
-    </label>
-        <label for="profile">
-        <span>{{form.profile.label }}</span>
-        {{form.profile }}
-    </label>
-    <label for="created_by">
-        <span>{{form.created_by.label}}</span>
-        {{form.created_by}}
-    </label>
-    <label for="customer_id">
-        <span>{{form.customer_id.label}}</span>
-        {{form.customer_id}}
-    </label>
-    <label for="modified_by">
-        <span>{{ form.modified_by.label}}</span>
-        {{ form.modified_by}}
-    </label>
-    <label for="status_id">
-        <span>{{form.status_id.label}}</span>
-        {{form.status_id}}
-    </label> {% endcomment %}
-

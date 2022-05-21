@@ -59,14 +59,12 @@ class Status(models.Model):
     def __str__(self):
         return self.description
 
-# class Access(models.Model):
-    # description = models.CharField(max_length=30, null=False)
 
 
 class UserDetail(models.Model):
     business = models.ForeignKey(Business, on_delete=models.DO_NOTHING)
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(validators = [phoneNumberRegex],max_length=16,null=False)
     lada = models.IntegerField(null=False)
     country = models.CharField(max_length=40, null=False)

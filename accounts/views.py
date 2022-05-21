@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect
 
 
 #local
-from .models import Account,AccountName
+from .models import Account,AccountName,UserDetail
 from .forms import CreateAccountForm
 from .functions import SearchExistent
 
@@ -48,7 +48,7 @@ def ActiveAccountFunc(request):
     """
     Show all active accounts filtered by Bussiness ID of person are looking for
     """
-    business_id = request.user.id
+    business_id = request.user.userdetail.business
     active = 1
     accounts = Account.objects.filter(status_id=active, business_id= business_id)
 
@@ -64,6 +64,7 @@ def CreateAccounts(request):
     """
     if request.method == 'POST':
         form = CreateAccountForm(request.POST)
+        user_details = UserDetail
         account = request.POST['account_name_id']
         perfil = AccountName.objects.get(pk=account)
         perfil = perfil.perfil_quantity

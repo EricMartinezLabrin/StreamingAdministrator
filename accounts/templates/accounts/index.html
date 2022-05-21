@@ -9,7 +9,9 @@
     Bienvenido {{user.first_name}} {{user.last_name}} <br>
     {% endif %}
 
+    {{ form.username.label }}  
     {{ form.username }}  
+    {{ form.password.label }}   
     {{ form.password }}   
 
     {% comment %} <input type="text" name="username">
