@@ -3,9 +3,24 @@
     <p><strong>No Hay Cuentas Disponibles</strong></p>
 {% else %}
 
-<p>la id de la cuenta es {{esomismo}}</p>
-
     <h1>Cuentas</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="name">
+            <span>{{form.account_name_id.label }}</span>
+            {{form.account_name_id }}
+        </label>
+        <label for="email">
+            <span>{{form.email.label }}</span>
+            {{form.email }}
+        </label>
+        <label for="status">
+            <span>{{form.status_id.label }}</span>
+            {{form.status_id }}
+        </label>
+        <input type="submit" value="Filtrar">
+    </form>
+
 <table>
     <tr>
         <th>Cuenta</th>
@@ -22,7 +37,7 @@
         <th>Comentarios</th>
         <th>Acciones</th>
     </tr>
-    {% for active in accounts %}
+    {% for active in venues %}
     <tr>
         <td>{{active.account_name_id}}</td>
         <td>{{active.created_at|date:"d-M-Y"}}</td>
@@ -46,4 +61,19 @@
     </tr>
     {% endfor %}
 </table>
+<br>
+<br>
+
+{% if venues.has_previous %}
+<a href="?page=1">&laquo Primera Página</a>
+<a href="?page={{venues.previous_page_number}}">Anterior</a>
+{% endif %}
+
+Página {{venues.number}} de {{venues.paginator.num_pages}}
+
+{% if venues.has_next %}
+    <a href="?page={{venues.next_page_number}}">Siguiente Página</a>
+    <a href="?page={{venues.paginator.num_pages}}">Última Página &raquo</a>
+{% endif %}
+
     {% endif %}

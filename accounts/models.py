@@ -87,7 +87,6 @@ class Account(models.Model):
     business = models.ForeignKey(Business, on_delete=models.DO_NOTHING)
     supplier= models.ForeignKey(Supplier, on_delete=models.DO_NOTHING, default=1)
     status_id = models.ForeignKey(Status, on_delete=models.DO_NOTHING,null=True, blank=True, default=1)
-    # customer_id = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, null=True, blank=True)
     customer_id = models.IntegerField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name = 'created_by')
     modified_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='modified_by')

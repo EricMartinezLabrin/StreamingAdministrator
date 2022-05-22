@@ -1,5 +1,5 @@
 from django import forms
-from .models import Account
+from .models import Account, AccountName
 from django.utils import timezone
 
 class CreateAccountForm(forms.ModelForm):
@@ -25,3 +25,22 @@ class CreateAccountForm(forms.ModelForm):
             'account_name_id': forms.Select(),
             'supplier': forms.Select()
         }
+
+class FilterAccountForm(forms.ModelForm):
+
+    class Meta:
+        model = Account
+
+        fields = ['account_name_id','email','status_id']
+        labels = {
+            'account_name_id': 'Cuenta',
+            'email': 'E-Mail',
+            'status_id': 'Estado'
+
+        }
+        widgets = {
+            'account_name_id': forms.Select(attrs={'id':'name'}),
+            'email': forms.TextInput(attrs={'id':'email','value':'---------'}),
+            'status_id': forms.Select(attrs={'id':'status'})
+        }
+          

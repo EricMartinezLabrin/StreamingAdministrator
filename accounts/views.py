@@ -6,12 +6,13 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 
 
 
 #local
 from .models import Account,AccountName,UserDetail
-from .forms import CreateAccountForm
+from .forms import CreateAccountForm, FilterAccountForm
 from .functions import SearchExistent
 
 
@@ -46,16 +47,49 @@ class DashboardView(generic.TemplateView):
 
 def ActiveAccountFunc(request):
     """
-    Show all active accounts filtered by Bussiness ID of person are looking for
+    Show all active accounts filtered by Bussiness ID of person are looking for And Pagintate by 10
     """
     business_id = request.user.userdetail.business
-    active = 1
-    accounts = Account.objects.filter(status_id=active, business_id= business_id)
 
-
-    return render(request, "accounts/active_accounts.html",{
-        "accounts": accounts
-    })
+    form = FilterAccountForm()
+    if request.method == 'POST':
+        account_name_id=request.POST['account_name_id']
+        email = request.POST['email']
+        status_id = request.POST['status_id']
+        if email == '---------':
+            accounts = Account.objects.filter(
+            business_id= business_id,
+            account_name_id=account_name_id,
+            status_id=status_id
+            )
+        else:
+            accounts = Account.objects.filter(
+                business_id= business_id,
+                account_name_id=account_name_id,
+                email=email,
+                status_id=status_id
+                )
+            #Set Up Pagination
+        p =Paginator(accounts, 10)
+        page = request.GET.get('page')
+        venues = p.get_page(page)
+        return render(request, "accounts/active_accounts.html",{
+            "accounts": accounts,
+            "venues": venues,
+            "form": form
+        })
+    else:
+        active = 1
+        accounts = Account.objects.filter(status_id=active, business_id= business_id)
+            #Set Up Pagination
+        p =Paginator(accounts, 10)
+        page = request.GET.get('page')
+        venues = p.get_page(page)
+        return render(request, "accounts/active_accounts.html",{
+            "accounts": accounts,
+            "venues": venues,
+            "form": form
+        })
 
 
 def CreateAccounts(request):
@@ -81,7 +115,7 @@ def CreateAccounts(request):
                 business = form.cleaned_data['business']
                 created_by = form.cleaned_data['created_by']
                 modified_by = form.cleaned_data['modified_by']
-                exist = SearchExistent.search_by_email(
+                exist = SearchExistent.search_by_email_account_id(
                     models=Account,
                     account_id=account_name_id,
                     email=email,
