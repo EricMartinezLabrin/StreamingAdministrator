@@ -19,7 +19,7 @@ class CreateAccountForm(forms.ModelForm):
         }
         widgets = {
             'expiration_date': forms.TextInput(attrs={'type':'date'}),
-            'email': forms.TextInput(attrs={'type': 'email'}),
+            'email': forms.EmailInput(),
             'password': forms.TextInput(attrs={'type': 'password'}),
             'comments': forms.Textarea(),
             'account_name_id': forms.Select(),
@@ -43,4 +43,29 @@ class FilterAccountForm(forms.ModelForm):
             'email': forms.TextInput(attrs={'id':'email','value':'---------'}),
             'status_id': forms.Select(attrs={'id':'status'})
         }
-          
+
+class EditAccountForm(forms.ModelForm):
+    
+    class Meta:
+        model = Account
+        fields = ['account_name_id','expiration_date','email','password','pin','supplier','comments']
+        labels = {
+            'supplier': 'Proveedor',
+            'expiration_date': 'Fecha de Vencimiento',
+            'email': "E-Mail",
+            'password': "Password",
+            'pin': 'Pin',
+            'comments': "Comentarios",
+            'account_name_id': 'Cuenta'
+        }
+        widgets={
+            'comments': forms.Textarea(),
+            'email': forms.EmailInput(),
+            'expiration_date': forms.DateInput(attrs={'type':'date'})
+        }
+
+# class InactiveButtonForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Account
+#         field = ['status_id']

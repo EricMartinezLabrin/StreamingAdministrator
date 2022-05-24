@@ -1,0 +1,18 @@
+{% if not detail%}
+<p>No hay datos disponibles</p>
+<a href="{% url 'accounts:list_account' %}">volver</a>
+{% endif %}
+{% for details in detail %}
+{% if user.userdetail.business == details.business %}
+
+<p>{{details.created_at}}</p>
+<p>{{details.expiration_date}}</p>
+<p>{{details.payment_amount}}</p>
+<p>{{details.invoice}}</p>
+<p>{{details.bank_id}}</p>
+<p>{{details.business}}</p>
+{% else %}
+<h1>Error 403</h1>
+<p><strong>No puedes acceder a esta página</strong></p>
+{% endif%}
+{% endfor %}

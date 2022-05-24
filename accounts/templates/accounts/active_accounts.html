@@ -1,9 +1,20 @@
 {% load static %}
-{% if not accounts %}
-    <p><strong>No Hay Cuentas Disponibles</strong></p>
-{% else %}
+{% load tags %}
 
-    <h1>Cuentas</h1>
+    <h1><a href="{% url 'accounts:dashboard' %}">Cuentas</a></h1>
+
+
+    {% if not accounts %}
+    <p><strong>No Hay Cuentas Disponibles</strong></p>
+    <a href=" {% url 'accounts:list_account' %} ">Volver</a>
+    {% else %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
     <form method="POST">
         {% csrf_token %}
         <label for="name">
@@ -58,6 +69,11 @@
         <td>{{active.profile}}</td>
         <td>{{active.pin}}</td>
         <td>{{active.comments}}</td>
+        <td>
+            <a href="{% url 'accounts:edit' active.id %}">Edit</a>
+            <a href="{% url 'accounts:layoff' active.account_name_id.id active.email %}">Suspender</a>
+            <a href="{% url 'accounts:detail' active.id %}">Detalles</a>
+        </td>
     </tr>
     {% endfor %}
 </table>

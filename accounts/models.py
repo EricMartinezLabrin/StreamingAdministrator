@@ -101,7 +101,7 @@ class Account(models.Model):
     sent = models.BooleanField(null=True, blank=True,default=False)
 
     def __str__(self):
-        return self.account_name_id.description
+        return self.account_name_id.description + "," + self.email
 
 
 class Sale(models.Model):

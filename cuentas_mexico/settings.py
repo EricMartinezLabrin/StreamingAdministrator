@@ -135,3 +135,5 @@ LOGOUT_REDIRECT_URL = reverse_lazy("accounts:index")
 LOGIN_URL = reverse_lazy("accounts:index")
 
 # DATETIME_FORMAT = "d - M - y"
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

@@ -1,18 +1,20 @@
 from django.forms import DateTimeInput, TextInput, Widget
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import UpdateView
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import permission_required
+from django.contrib import messages
 
 
 
 #local
-from .models import Account,AccountName,UserDetail
-from .forms import CreateAccountForm, FilterAccountForm
+from .models import Account,AccountName,UserDetail,Status, Sale
+from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm
 from .functions import SearchExistent
 
 
@@ -45,6 +47,7 @@ class DashboardView(generic.TemplateView):
     template_name = 'accounts/dashboard.html'
 
 
+@permission_required('accounts.view_account', raise_exception=True)
 def ActiveAccountFunc(request):
     """
     Show all active accounts filtered by Bussiness ID of person are looking for And Pagintate by 10
@@ -149,3 +152,50 @@ def CreateAccounts(request):
         'form': form,
     }
         )
+
+
+
+def EditAccounFunc(request, pk):
+    """
+    Edith accounts Detail
+    """
+    #Getting actual data
+    # current_data = Account.objects.get(id=pk)
+    current_data = get_object_or_404(Account, pk=pk)
+    form = EditAccountForm(request.POST or None,instance=current_data)
+
+    #updatating data
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:list_account')
+    
+    return render(request,'accounts/update_accounts.html', {
+        'form':form
+    })
+
+
+def LayoffAccountFunc(request,account_name_id,email):
+    """
+    It View Suspend an active account
+    """
+    account = Account.objects.filter(account_name_id=account_name_id,email=email)
+    status = Status.objects.get(description='inactive')
+    
+    for layoff in account:
+        layoff.status_id=status
+        layoff.save()
+    # account.status_id= status
+    # account.save()
+    layoff_message= f"La cuenta email {email} fue suspendida Correctamente"
+    messages.success(request, layoff_message)
+    return HttpResponseRedirect(reverse('accounts:list_account',))
+
+
+def DetailAccountFunc(request, pk):
+    
+    detail = Sale.objects.filter(account_id = pk)
+
+    return render(request,'accounts/detail.html', {
+        'detail':detail
+    })
