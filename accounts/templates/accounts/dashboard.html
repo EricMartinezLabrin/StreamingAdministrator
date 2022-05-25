@@ -1,13 +1,6 @@
-{% load static %}
-{% load tags %}
+{% extends 'template.html' %}
+{% block body %}
 
-<p>hola {{ user.first_name}}</p>
-<p>Tu cargo es: {{user.groups.all}}</p>
 
-<a href="{% url 'accounts:logout' %}">Cerrar Sesión</a>
-
-<a href="{% url 'accounts:list_account' %}">Ver Cuentas Activas</a>
-
-<a href="{% url 'accounts:create_account' %}">Crear Cuenta</a>
-
+{% endblock body %}
 

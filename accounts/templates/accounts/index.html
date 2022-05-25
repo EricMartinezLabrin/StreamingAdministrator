@@ -1,18 +1,44 @@
 {% load static %}
-<form method="POST">
-    {% csrf_token %}
-    {% if  form.errors %}
-        <p><strong>Usuario o contraseña incorrecto, porfavor vuelve a inentarlo</strong></p>
-    {% endif %}
+{% load tags %}
+<!DOCTYPE html>
+<html lang="en" class="html_login">
 
-    {% if user.is_authenticated %}
-    Bienvenido {{user.first_name}} {{user.last_name}} <br>
-    {% endif %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+    <title>Document</title>
+</head>
 
-    {{ form.username.label }}  
-    {{ form.username }}  
-    {{ form.password.label }}   
-    {{ form.password }}   
+<body class="text-center login">
+    <main class="form-signin w-100 m-auto">
+        <form method="POST">
+            {% csrf_token %}
+            {% if  form.errors %}
+            <p><strong>Usuario o contraseña incorrecto, porfavor vuelve a inentarlo</strong></p>
+            {% endif %}
 
-    <input type="submit" value="Login">
-</form>
+            <img class="mb-4 logo_login" src="{% static 'accounts/images/cm_logo_black.png' %}" alt="">
+            <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+
+            <div class="form-floating">
+                <input type="text" class="form-control form-input" id="floatingInput" name="{{ form.username.name }}">
+                {% comment %} {{ form.username }} {% endcomment %}
+                <label for="floatingInput">{{ form.username.label }}</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control form-input" id="floatingPassword"
+                    name="{{ form.password.name }}">
+                    {% comment %} {{ form.password }} {% endcomment %}
+                <label for="floatingPassword">{{ form.password.label }}</label>
+            </div>
+
+            <input type="submit" class="w-100 btn btn-lg btn-primary" value="Login">
+            <p class="mt-5 mb-3 text-muted">&copy; Eric Martinez, 2022</p>
+        </form>
+    </main>
+</body>
+
+</html>

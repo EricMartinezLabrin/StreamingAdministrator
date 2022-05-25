@@ -39,9 +39,9 @@ class FilterAccountForm(forms.ModelForm):
 
         }
         widgets = {
-            'account_name_id': forms.Select(attrs={'id':'name'}),
-            'email': forms.TextInput(attrs={'id':'email','value':'---------'}),
-            'status_id': forms.Select(attrs={'id':'status'})
+            'account_name_id': forms.Select(attrs={'class':'form-select','id':'inputGroupSelect01'}),
+            'email': forms.TextInput(attrs={'id':'addon-wrapping','value':'---------'}),
+            'status_id': forms.Select(attrs={'class':'form-select','id':'status'})
         }
 
 class EditAccountForm(forms.ModelForm):
