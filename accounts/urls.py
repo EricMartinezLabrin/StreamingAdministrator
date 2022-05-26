@@ -12,7 +12,7 @@ urlpatterns = [
     path("logout/", views.LogoutFormView.as_view(), name="logout"),
     path("list_account/", login_required(views.ActiveAccountFunc),name="list_account"),
     path("list_account/create/", login_required(views.CreateAccounts), name="create_account"),
-    path("list_account/edit/<int:pk>/", login_required(views.EditAccounFunc), name="edit"),
-    path("list_account/edit/layoff/<str:account_name_id>/<str:email>/", login_required(views.LayoffAccountFunc), name="layoff"),
+    path("list_account/edit/<int:pk>/", login_required(views.EditAccountView.as_view()), name="edit"),
+    path("list_account/edit/layoff_layon/<str:account_name_id>/<str:email>/<int:status>", login_required(views.LayoffLayonAccountFunc), name="layoff_layon"),
     path("list_account/detail/<int:pk>/", login_required(views.DetailAccountFunc), name="detail")
     ]

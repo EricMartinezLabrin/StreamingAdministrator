@@ -48,7 +48,7 @@ class EditAccountForm(forms.ModelForm):
     
     class Meta:
         model = Account
-        fields = ['account_name_id','expiration_date','email','password','pin','supplier','comments']
+        fields = ['account_name_id','expiration_date','email','password','pin','supplier','comments','renovable']
         labels = {
             'supplier': 'Proveedor',
             'expiration_date': 'Fecha de Vencimiento',
@@ -56,12 +56,19 @@ class EditAccountForm(forms.ModelForm):
             'password': "Password",
             'pin': 'Pin',
             'comments': "Comentarios",
-            'account_name_id': 'Cuenta'
+            'account_name_id': 'Cuenta',
+            'renovable': 'Es Renovable'
         }
         widgets={
-            'comments': forms.Textarea(),
-            'email': forms.EmailInput(),
-            'expiration_date': forms.DateInput(attrs={'type':'date'})
+            'comments': forms.Textarea(attrs={'class':'form-control','id':'comments'}),
+            'password': forms.TextInput(attrs={'class':'form-control','id':'password'}),
+            'email': forms.EmailInput(attrs={'class':'form-control','id':'email'}),
+            'pin': forms.NumberInput(attrs={'class':'form-control','id':'pin'}),
+            'expiration_date': forms.DateInput(attrs={'type':'date','class':'form-control','id':'expiration_date'}),
+            'account_name_id': forms.Select(attrs={'class':'form-control','id':'account_name_id'}),
+            'supplier': forms.Select(attrs={'class':'form-control','id':'supplier'}),
+            'renovable': forms.CheckboxInput(attrs={'id':'renovable'})
+            
         }
 
 # class InactiveButtonForm(forms.ModelForm):

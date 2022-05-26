@@ -154,40 +154,35 @@ def CreateAccounts(request):
         )
 
 
+class EditAccountView(UpdateView):
+    model = Account
+    form_class = EditAccountForm
+    template_name = 'accounts/update_accounts.html'
+    success_url = reverse_lazy('accounts:list_account')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
-def EditAccounFunc(request, pk):
+
+def LayoffLayonAccountFunc(request,account_name_id,email,status):
     """
-    Edith accounts Detail
-    """
-    #Getting actual data
-    # current_data = Account.objects.get(id=pk)
-    current_data = get_object_or_404(Account, pk=pk)
-    form = EditAccountForm(request.POST or None,instance=current_data)
-
-    #updatating data
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('accounts:list_account')
-    
-    return render(request,'accounts/update_accounts.html', {
-        'form':form
-    })
-
-
-def LayoffAccountFunc(request,account_name_id,email):
-    """
-    It View Suspend an active account
+    It View Suspend an active account if status = 1 or Reactive an inactive account if status = 2
     """
     account = Account.objects.filter(account_name_id=account_name_id,email=email)
-    status = Status.objects.get(description='inactive')
+    if status == 1:
+        status = Status.objects.get(description='inactive')
+        layoff_message= f"La cuenta email {email} fue suspendida Correctamente"
+
+    else:
+        status = Status.objects.get(description='active')
+        layoff_message= f"La cuenta email {email} fue Reactivada Correctamente"
+
     
     for layoff in account:
         layoff.status_id=status
         layoff.save()
     # account.status_id= status
     # account.save()
-    layoff_message= f"La cuenta email {email} fue suspendida Correctamente"
     messages.success(request, layoff_message)
     return HttpResponseRedirect(reverse('accounts:list_account',))
 

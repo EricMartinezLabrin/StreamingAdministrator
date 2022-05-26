@@ -18,6 +18,7 @@
 
 {% comment %} Form Filters {% endcomment %}
 <section>
+
     <form class="row row-cols-lg-auto g-3 align-items-center filter" method="POST">
         {% csrf_token %}
 
@@ -81,7 +82,14 @@
             <td>{{active.created_by}}</td>
             <td>{{active.modified_by}}</td>
             <td>{{active.supplier}}</td>
-            <td>{{active.email}}</td>
+            <td>
+                {{active.email}}
+                {% if active.renovable == True %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill gold" viewBox="0 0 16 16">
+                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                  </svg>
+                {% endif %}
+            </td>
             <td>{{active.password}}</td>
             <td>
                 {% comment %} Show Disponible if account is unnasigned to a Customer or Ocupado if account is Asigned to
@@ -98,29 +106,44 @@
             <td>{{active.comments}}</td>
             <td>
                 {% comment %} edit {% endcomment %}
-                <a href="{% url 'accounts:edit' active.id %}" title="Editar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                      </svg>
+                <a href="#" onclick="abrir_modal_edicion('{% url 'accounts:edit' active.id %}')" title="Editar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path
+                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                        <path fill-rule="evenodd"
+                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg> 
                 </a>
                 {% comment %} suspender/editar {% endcomment %}
-                {% if active.status_id_id == 1 %}
-                <a href="{% url 'accounts:layoff' active.account_name_id.id active.email %}" title ="Suspender">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                        <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
-                      </svg>
+
+                <a href="{% url 'accounts:layoff_layon' active.account_name_id.id active.email active.status_id_id%}">
+                    {% if active.status_id_id == 1 %}
+                    <svg title="Suspender" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-pause-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path
+                            d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z" />
+                    </svg>
+                    {% else %}
+                    <svg title="Activar" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-play-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path
+                            d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                    </svg>
+                    {% endif %}
                 </a>
-                {% else %}
-                Reactivar
-                {% endif %}
+
                 {% comment %} Detalles {% endcomment %}
                 <a href="{% url 'accounts:detail' active.id %}" title="Detalles">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                        <path
+                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                    </svg>
                 </a>
             </td>
         </tr>
@@ -128,20 +151,98 @@
     </tbody>
 </table>
 <br>
-<br>
 
-{% if venues.has_previous %}
-<a href="?page=1">&laquo Primera Página</a>
-<a href="?page={{venues.previous_page_number}}">Anterior</a>
-{% endif %}
+<div class="pagination">
+    {% comment %} mostramos si no hay pagina previa {% endcomment %}
+    {% if not venues.has_previous %}
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{venues.number}}</span>
+            </li>
+            <li class="page-item"><a class="page-link"
+                    href="?page={{venues.next_page_number}}">{{venues.next_page_number}}</a></li>
+            <li class="page-item"><a class="page-link"
+                    href="?page={{venues.paginator.num_pages}}">{{venues.paginator.num_pages}}</a></li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{venues.next_page_number}}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+{% comment %} mostramos si hay pagina y previa y hay pagina siguiente {% endcomment %}
+    {% elif venues.has_previous and venues.has_next %}
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="?page={{venues.previous_page_number}}">Anterior</a>
+            </li>
+            {% if venues.previous_page_number != 1 %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">1</a></li>
+            <li class="page-item active" aria-current="page">
 
-Página {{venues.number}} de {{venues.paginator.num_pages}}
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{venues.previous_page_number}}">{{venues.previous_page_number}}</a></li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">{{venues.number}}</a>
+            </li>
+            <li class="page-item"><a class="page-link"
+                    href="?page={{venues.next_page_number}}">{{venues.next_page_number}}</a></li>
+            {% if  venues.paginator.num_pages != venues.next_page_number %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{venues.paginator.num_pages}}">{{venues.paginator.num_pages}}</a></li>
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{venues.next_page_number}}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
 
-{% if venues.has_next %}
-<a href="?page={{venues.next_page_number}}">Siguiente Página</a>
-<a href="?page={{venues.paginator.num_pages}}">Última Página &raquo</a>
-{% endif %}
+{% comment %} mostramos si no hay pagina siguiente {% endcomment %}
+    {% elif venues.has_previous and not venues.has_next %}
 
-{% endif %}
 
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="?page={{venues.previous_page_number}}">Anterior</a>
+            </li>
+            {% if  venues.previous_page != 1 %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">1</a>
+            </li>
+            {% endif %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{venues.previous_page_number}}">{{venues.previous_page_number}}</a></li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">{{venues.number}}</a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+
+    {% endif %}
+    {% endif %}
+</div>
+
+<div class="modal fade" id="edicion" role="dialog">
+
+</div>
 {% endblock body %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+    function abrir_modal_edicion(url){
+        $('#edicion').load(url, function(){
+            $(this).modal('show');
+        });
+    }
+</script>
+{% endblock extrajs %}
