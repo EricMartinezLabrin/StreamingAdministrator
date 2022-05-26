@@ -44,7 +44,7 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{% url 'accounts:list_account' %}">Ver Cuentas
                                         Activas</a></li>
-                                <li><a class="dropdown-item" href="{% url 'accounts:create_account' %}">Crear Cuenta</a>
+                                <li><a class="dropdown-item" href="#" onclick="abrir_modal_edicion('{% url 'accounts:create_account' %}')">Crear Cuenta</a>
                                 </li>
                             </ul>
                         </li>
@@ -78,9 +78,20 @@
         {% block body %}
 
         {% endblock body %}
+    </div>
+
+    <div class="modal fade" id="edicion" role="dialog">
     </main>
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        var $ = jQuery.noConflict();
+        function abrir_modal_edicion(url){
+            $('#edicion').load(url, function(){
+                $(this).modal('show');
+            });
+        }
+    </script>
 
     {% block extrajs %}
     

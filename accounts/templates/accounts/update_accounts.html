@@ -42,6 +42,7 @@
                         <label for="comments" class="form-label">{{form.comments.label}}</label>
                         {{form.comments}}
                     </div>
+                    <input type="hidden" value="{{user.id}}" name="modified_by">
                     {% comment %} <input type="submit" value="Editar"> {% endcomment %}
 
                 </div>

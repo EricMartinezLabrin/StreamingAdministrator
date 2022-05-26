@@ -18,12 +18,15 @@ class CreateAccountForm(forms.ModelForm):
             'supplier': 'Proveedor'
         }
         widgets = {
-            'expiration_date': forms.TextInput(attrs={'type':'date'}),
-            'email': forms.EmailInput(),
-            'password': forms.TextInput(attrs={'type': 'password'}),
-            'comments': forms.Textarea(),
-            'account_name_id': forms.Select(),
-            'supplier': forms.Select()
+            'expiration_date': forms.TextInput(attrs={'type':'date','class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+            'password': forms.TextInput(attrs={'type': 'password','class':'form-control'}),
+            'comments': forms.TextInput(attrs={'class':'form-control'}),
+            'account_name_id': forms.Select(attrs={'class':'form-control'}),
+            'supplier': forms.Select(attrs={'class':'form-control'}),
+            'renovable': forms.CheckboxInput(attrs={'id':'renovable'}),
+            'pin': forms.NumberInput(attrs={'class':'form-control','id':'pin'})
+
         }
 
 class FilterAccountForm(forms.ModelForm):
@@ -48,7 +51,7 @@ class EditAccountForm(forms.ModelForm):
     
     class Meta:
         model = Account
-        fields = ['account_name_id','expiration_date','email','password','pin','supplier','comments','renovable']
+        fields = ['account_name_id','expiration_date','email','password','pin','supplier','comments','renovable','modified_by']
         labels = {
             'supplier': 'Proveedor',
             'expiration_date': 'Fecha de Vencimiento',
@@ -60,7 +63,7 @@ class EditAccountForm(forms.ModelForm):
             'renovable': 'Es Renovable'
         }
         widgets={
-            'comments': forms.Textarea(attrs={'class':'form-control','id':'comments'}),
+            'comments': forms.TextInput(attrs={'class':'form-control','id':'comments'}),
             'password': forms.TextInput(attrs={'class':'form-control','id':'password'}),
             'email': forms.EmailInput(attrs={'class':'form-control','id':'email'}),
             'pin': forms.NumberInput(attrs={'class':'form-control','id':'pin'}),
@@ -71,8 +74,3 @@ class EditAccountForm(forms.ModelForm):
             
         }
 
-# class InactiveButtonForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Account
-#         field = ['status_id']

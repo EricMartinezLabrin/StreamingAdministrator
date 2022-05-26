@@ -150,7 +150,6 @@
         {% endfor %}
     </tbody>
 </table>
-<br>
 
 <div class="pagination">
     {% comment %} mostramos si no hay pagina previa {% endcomment %}
@@ -229,20 +228,20 @@
 
     {% endif %}
     {% endif %}
-</div>
+{% comment %} </div>
 
-<div class="modal fade" id="edicion" role="dialog">
+<div class="modal fade" id="edicion" role="dialog"> {% endcomment %}
 
 </div>
 {% endblock body %}
 
 {% block extrajs %}
-<script type="text/javascript">
+{% comment %} <script type="text/javascript">
     var $ = jQuery.noConflict();
     function abrir_modal_edicion(url){
         $('#edicion').load(url, function(){
             $(this).modal('show');
         });
     }
-</script>
+</script> {% endcomment %}
 {% endblock extrajs %}

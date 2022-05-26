@@ -1,46 +1,63 @@
-{% extends 'template.html' %}
-{% block body %}
-{% if error_message %}
-<p><strong>{{error_message}}</strong></p>
-{% endif %}
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Crear Nueva Cuenta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'accounts:create_account' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
 
-<h1>Actual business is {{user.userdetail.business_id}}</h1>
+                {% if error_message %}
+                <p><strong>{{error_message}}</strong></p>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="account_name_id" class="form-label">{{form.account_name_id.label}}</label>
+                    {{form.account_name_id}}
+                </div>
+                <div class="mb-3">
+                    <label for="expiration_date" class="form-label">{{form.expiration_date.label}}</label>
+                    {{form.expiration_date}}
+                </div>
 
-<form method="post">
-    {% csrf_token %}
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{form.email.label}}</label>
+                    {{form.email}}
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">{{form.password.label}}</label>
+                    {{form.password}}
+                </div>
+                <div class="mb-3">
+                    <label for="pin" class="form-label">{{form.pin.label}}</label>
+                    {{form.pin}}
+                </div>
+                <div class="mb-3">
+                    <label for="renovable" class="form-label">{{form.renovable.label}}</label>
+                    {{form.renovable}}
+                </div>
 
-    <label for="account_name_id">
-        <span>{{form.account_name_id.label }}</span>
-        {{form.account_name_id }}
-    </label>
-    <label for="supplier">
-        <span>{{ form.supplier.label}}</span>
-        {{ form.supplier}}
-    </label>
-    <label for="expiration_date">
-        <span>{{form.expiration_date.label}}</span>
-        {{form.expiration_date}}
-    </label>
-    <label for="email">
-        <span> {{ form.email.label }}</span>
-        {{ form.email }}
-    </label>
-    <label for="password">
-        <span> {{form.password.label }}</span>
-        {{form.password }}
-    </label>
-    <label for="pin">
-        <span>{{ form.pin.label }}</span>
-        {{ form.pin }}
-    </label>
-    <label for="comments">
-        <span>{{form.comments.label }}</span>
-        {{form.comments }}
-    </label>
-    <input type="hidden" value="{{user.userdetail.business_id}}" name="business">
-    <input type="hidden" value="{{user.id}}" name="created_by">
-    <input type="hidden" value="{{user.id}}" name="modified_by">
-    <input type="hidden" value="1" name="profile">
-    <input type="submit" value="Terminar">
-</form>
-{% endblock body %}
+                <div class="mb-3">
+                    <label for="supplier" class="form-label">{{form.supplier.label}}</label>
+                    {{form.supplier}}
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label">{{form.comments.label}}</label>
+                    {{form.comments}}
+                </div>
+    
+                    <input type="hidden" value="{{user.userdetail.business_id}}" name="business">
+                    <input type="hidden" value="{{user.id}}" name="created_by">
+                    <input type="hidden" value="{{user.id}}" name="modified_by">
+                    <input type="hidden" value="1" name="profile">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Crear">
+            </div>
+        </form>
+    </div>
+</div>
+
+
