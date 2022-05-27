@@ -8,9 +8,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'accounts/mobile.css'%}" media="only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px)">    
+    <link rel="stylesheet" href="{% static 'accounts/mobile.css'%}"
+        media="only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px)">
     <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
-    
+
     <title>{% block title %}{% endblock title %}</title>
 </head>
 
@@ -34,7 +35,7 @@
                                 href="{% url 'accounts:dashboard' %}">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="{% url 'accounts:sales' %}">Ventas</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -44,7 +45,9 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{% url 'accounts:list_account' %}">Ver Cuentas
                                         Activas</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="abrir_modal_edicion('{% url 'accounts:create_account' %}')">Crear Cuenta</a>
+                                <li><a class="dropdown-item" href="#"
+                                        onclick="abrir_modal_edicion('{% url 'accounts:create_account' %}')">Crear
+                                        Cuenta</a>
                                 </li>
                             </ul>
                         </li>
@@ -64,8 +67,10 @@
                         </li>
 
                     </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <form action="{% url 'accounts:sales' %}" class="d-flex" role="search" method="POST">
+                        {% csrf_token %}
+                        <input class="form-control me-2" name="customer" type="text" placeholder="Search"
+                            aria-label="Search" required>
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
                 </div>
@@ -73,36 +78,41 @@
         </nav>
     </header>
     {% endif %}
-    
+
     <main>
         {% block body %}
 
         {% endblock body %}
-    </div>
+        </div>
 
-    <div class="modal fade" id="edicion" role="dialog">
+        <div class="modal fade" id="edicion" role="dialog">
     </main>
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
     <script type="text/javascript">
         var $ = jQuery.noConflict();
-        function abrir_modal_edicion(url){
-            $('#edicion').load(url, function(){
+
+        function abrir_modal_edicion(url) {
+            $('#edicion').load(url, function () {
                 $(this).modal('show');
             });
         }
     </script>
 
     {% block extrajs %}
-    
+
     {% endblock extrajs %}
 
     {% if user.is_authenticated %}
-    <footer>
+    {% comment %} <footer>
         <p>
             Creado por Eric Martínez, Todos los derechos reservados
         </p>
-    </footer>
+    </footer> {% endcomment %}
+    
     {% endif %}
 </body>
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.forms import DateTimeInput, TextInput, Widget
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -13,7 +14,7 @@ from django.contrib import messages
 
 
 #local
-from .models import Account,AccountName,UserDetail,Status, Sale
+from .models import Account,AccountName,UserDetail,Status,Sale,Customer
 from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm
 from .functions import SearchExistent
 
@@ -194,3 +195,38 @@ def DetailAccountFunc(request, pk):
     return render(request,'accounts/detail.html', {
         'detail':detail
     })
+
+def SaleFunc(request):
+    customer = request.POST["customer"]
+
+    is_email = False
+    is_phone = False
+    now = datetime.now()
+    #check if data is email or phone number
+    if customer.isnumeric():
+        is_phone = True
+    else:
+        is_email = True
+    
+    try:
+            #get customer_id
+        if is_email == True:
+            customer_id = Customer.objects.get(email__contains=customer)
+        if is_phone == True:
+            customer_id = Customer.objects.get(phone__contains= customer)
+
+        # current_sales = get_object_or_404(Sale, customer_id=customer_id.id)
+        detail_sales = Sale.objects.filter(customer_id=customer_id.id)
+        return render(request,'accounts/sales.html',{
+            'detail_sales':detail_sales,
+            'customer': customer_id,
+            'today': now
+            })
+            
+    except:
+        return render(request, "accounts/sales.html",{
+            "error_message": "El cliente no existe, verifica que no tenga el codigo de pais"
+        })
+
+
+    

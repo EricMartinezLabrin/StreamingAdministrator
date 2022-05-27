@@ -1,3 +1,9 @@
+:root {
+    --verde_oscuro: #badbcc;
+    --verde_claro: #D1E7DD;
+    --verde_letras: #0f5132;
+}
+
 * {
     box-sizing: border-box;
     padding: 0;
@@ -22,7 +28,7 @@ nav .navbar-brand a {
 }
 
 main {
-    height: 84vh;
+    height: 100%;
     padding: 1rem;
     font-size: 1.5rem;
 }
@@ -35,6 +41,41 @@ main {
 
 section {
     margin-bottom: 1rem;
+}
+
+section.activas {
+    width: 100%;
+    border: 0.1rem solid var(--verde_oscuro);
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+section div.header {
+    background-color: var(--verde_claro);
+    color: var(--verde_letras);
+    padding: 0.5rem;
+    border-bottom: 0.1rem solid var(--verde_oscuro);
+    width:100%;
+}
+section div.body{
+    border: 1px solid blue;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+section div.detail{
+    display: inline-block;
+}
+section div.detail ul li{
+    list-style: none;
+}
+section div.footer{
+    width: 100%;
+    border-top: 00.1rem solid var(--verde_oscuro);
 }
 
 footer {
@@ -55,13 +96,15 @@ table a {
     text-decoration: none;
 }
 
-.html_login{
+.html_login {
     height: 100%;
 }
-.logo_login{
-    width:20rem;
+
+.logo_login {
+    width: 20rem;
     border-radius: 1rem;
 }
+
 .login {
     display: flex;
     align-items: center;
@@ -69,35 +112,39 @@ table a {
     padding-top: 40px;
     padding-bottom: 40px;
     background-color: #f5f5f5;
-    height:100%;
+    height: 100%;
     justify-content: center;
-  }
-  .login h1{
+}
+
+.login h1 {
     font-size: 2.6rem;
-  }
-  .form-input{
-      font-size:1.6rem;
-  }
-  .form-signin {
+}
+
+.form-input {
+    font-size: 1.6rem;
+}
+
+.form-signin {
     max-width: 330px;
     padding: 15px;
-  }
-  
-  .form-signin .form-floating:focus-within {
+}
+
+.form-signin .form-floating:focus-within {
     z-index: 2;
-  }
-  
-  .form-signin input[type="email"] {
+}
+
+.form-signin input[type="email"] {
     margin-bottom: -1px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-  }
-  
-  .form-signin input[type="password"] {
+}
+
+.form-signin input[type="password"] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-  }
-.gold{
+}
+
+.gold {
     color: #efb810;
 }

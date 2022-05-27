@@ -1,7 +1,9 @@
 from django import forms
-from .models import Account, AccountName
+from .models import Account, AccountName, Sale,Customer
 from django.utils import timezone
 
+
+#CREATE
 class CreateAccountForm(forms.ModelForm):
 
     class Meta:
@@ -28,25 +30,7 @@ class CreateAccountForm(forms.ModelForm):
             'pin': forms.NumberInput(attrs={'class':'form-control','id':'pin'})
 
         }
-
-class FilterAccountForm(forms.ModelForm):
-
-    class Meta:
-        model = Account
-
-        fields = ['account_name_id','email','status_id']
-        labels = {
-            'account_name_id': 'Cuenta',
-            'email': 'E-Mail',
-            'status_id': 'Estado'
-
-        }
-        widgets = {
-            'account_name_id': forms.Select(attrs={'class':'form-select','id':'inputGroupSelect01'}),
-            'email': forms.TextInput(attrs={'id':'addon-wrapping','value':'---------'}),
-            'status_id': forms.Select(attrs={'class':'form-select','id':'status'})
-        }
-
+#UPDATE
 class EditAccountForm(forms.ModelForm):
     
     class Meta:
@@ -74,3 +58,28 @@ class EditAccountForm(forms.ModelForm):
             
         }
 
+#FILTER
+class FilterAccountForm(forms.ModelForm):
+
+    class Meta:
+        model = Account
+
+        fields = ['account_name_id','email','status_id']
+        labels = {
+            'account_name_id': 'Cuenta',
+            'email': 'E-Mail',
+            'status_id': 'Estado'
+
+        }
+        widgets = {
+            'account_name_id': forms.Select(attrs={'class':'form-select','id':'inputGroupSelect01'}),
+            'email': forms.TextInput(attrs={'id':'addon-wrapping','value':'---------'}),
+            'status_id': forms.Select(attrs={'class':'form-select','id':'status'})
+        }
+
+class FindCustomer(forms.ModelForm):
+
+    class Meta:
+        model = Customer
+
+        fields =['email', 'phone']
