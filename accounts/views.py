@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
+from django.utils import timezone
 
 
 
@@ -201,7 +202,7 @@ def SaleFunc(request):
 
     is_email = False
     is_phone = False
-    now = datetime.now()
+    # now = datetime.now()
     #check if data is email or phone number
     if customer.isnumeric():
         is_phone = True
@@ -216,11 +217,12 @@ def SaleFunc(request):
             customer_id = Customer.objects.get(phone__contains= customer)
 
         # current_sales = get_object_or_404(Sale, customer_id=customer_id.id)
-        detail_sales = Sale.objects.filter(customer_id=customer_id.id)
+        active_sales = Sale.objects.filter(customer_id=customer_id.id, expiration_date__gte=timezone.now())
+        inactive_sales = Sale.objects.filter(customer_id=customer_id.id, expiration_date__lte= timezone.now())
         return render(request,'accounts/sales.html',{
-            'detail_sales':detail_sales,
-            'customer': customer_id,
-            'today': now
+            'active_sales':active_sales,
+            'inactive_sales':inactive_sales,
+            'customer': customer_id
             })
             
     except:

@@ -82,7 +82,9 @@ section div.header {
 }
 section div.body{
     width: 100%;
-
+}
+.not_found{
+    margin: 1rem;
 }
 section div.detail{
     margin: 1rem;

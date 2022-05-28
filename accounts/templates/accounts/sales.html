@@ -1,7 +1,7 @@
 {% extends 'template.html' %}
 {% block body %}
 
-{% if detail_sales %}
+{% if active_sales or inactive_sales%}
 
 <h1>Detalles de {{customer.name}}</h1>
 
@@ -23,8 +23,14 @@
         <h4 class="modal-title">Cuentas Activas</h4>
     </div>
     <div class="body">
-        {% for detail in detail_sales %}
-        {% if detail.expiration_date|date:"d-M-Y" > today|date:"d-M-Y" %}
+        {% if not active_sales %}
+        <div class="not_found"> 
+            <h4>No hay cuentas activas</h4>
+        </div>          
+        {% endif %}
+
+        {% for detail in active_sales %}
+        {% comment %} {% if detail.expiration_date|date:"d-M-Y" > today|date:"d-M-Y" %} {% endcomment %}
         <div class="detail">
             <div class="account">
                 <span>Cuenta:</span>
@@ -70,9 +76,7 @@
             <button class="btn btn-secondary">Copiar</button>
             <button class="btn btn-secondary">Renovar</button>
         </div>
-        {% elif not detail.expiration_date|date:"d-M-Y" > today|date:"d-M-Y" %}
-            <h4>No hay cuentas activas</h4>
-        {% endif %}
+        
         {% endfor %}
 
     </div>
@@ -85,8 +89,13 @@
         <h4 class="modal-title">Cuentas Inactivas</h4>
     </div>
     <div class="body">
-        {% for detail in detail_sales %}
-        {% if detail.expiration_date|date:"d-M-Y" <= today|date:"d-M-Y" %}
+        {% if not inactive_sales %}
+        <div class="not_found"> 
+            <h4>No hay cuentas inactivas</h4>
+        </div>          
+        {% endif %}
+        {% for detail in inactive_sales %}
+        {% comment %} {% if detail.expiration_date|date:"d-M-Y" <= today|date:"d-M-Y" %} {% endcomment %}
         <div class="detail">
             <div class="account">
                 <span>Cuenta:</span>
@@ -132,9 +141,7 @@
             <button class="btn btn-secondary">Copiar</button>
             <button class="btn btn-secondary">Renovar</button>
         </div>
-        {% else %}
-        <h4>No hay cuentas inactivas</h4>
-        {% endif %}
+
         {% endfor %}
 
     </div>
