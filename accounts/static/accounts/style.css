@@ -2,6 +2,9 @@
     --verde_oscuro: #badbcc;
     --verde_claro: #D1E7DD;
     --verde_letras: #0f5132;
+    --rojo_letras: #842029;
+    --rojo_claro: #F8D7DA;
+    --rojo_oscuro: #f5c2c7;
 }
 
 * {
@@ -31,6 +34,7 @@ main {
     height: 100%;
     padding: 1rem;
     font-size: 1.5rem;
+    min-width: 320px;
 }
 
 .account-filters {
@@ -39,17 +43,34 @@ main {
     background-color: red;
 }
 
+.buttons{
+    margin: 1rem 0;
+}
+
 section {
     margin-bottom: 1rem;
 }
 
 section.activas {
-    width: 100%;
     border: 0.1rem solid var(--verde_oscuro);
     border-radius: 0.5rem;
-    margin-right: 1rem;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+}
+section.inactivas {
+    border: 0.1rem solid var(--rojo_oscuro);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+section.inactivas div.header {
+    background-color: var(--rojo_claro);
+    color: var(--rojo_letras);
+    padding: 0.5rem;
+    border-bottom: 0.1rem solid var(--rojo_oscuro);
+    width:100%;
 }
 
 section div.header {
@@ -60,22 +81,36 @@ section div.header {
     width:100%;
 }
 section div.body{
-    border: 1px solid blue;
     width: 100%;
-    padding: 1rem;
-    display: flex;
-    flex-wrap: wrap;
 
 }
 section div.detail{
-    display: inline-block;
+    margin: 1rem;
+    display: flex;
+    /* justify-content: space-around; */
+    flex-wrap: wrap;
 }
-section div.detail ul li{
-    list-style: none;
+section div.detail span{
+    font-weight: bold;
+    width: 30rem;
+}
+
+section div.detail div{
+    width: 20rem;
+}
+section div.detail div.email{
+    flex-grow: 1;
+}
+section div.detail div.perfil{
+    width: 10rem;
+}
+section div.detail div.pin{
+    width: 10rem;
 }
 section div.footer{
     width: 100%;
-    border-top: 00.1rem solid var(--verde_oscuro);
+    border-bottom: 0.1rem solid var(--verde_oscuro);
+    padding: 1rem;
 }
 
 footer {
