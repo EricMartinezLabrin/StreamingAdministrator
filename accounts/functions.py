@@ -1,5 +1,6 @@
 #django
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 class SearchExistent():
 
@@ -19,3 +20,14 @@ class SearchExistent():
             raise('Existe un error con esta cuenta, porfavor verificar')
 
 
+
+class UpdateAccount():
+
+    def deactivate_due(model,customer_id):
+        """
+        Deactive all expired accounts
+        """
+        try:
+            return model.objects.filter(customer_id=customer_id, expiration_date__lte=timezone.now()).update(status_id=2)
+        except:
+            return False

@@ -1,12 +1,11 @@
-from datetime import datetime
 from django.forms import DateTimeInput, TextInput, Widget
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
-from django.views.generic.edit import UpdateView
-from django.http import HttpResponseRedirect
+from django.views.generic.edit import CreateView, UpdateView
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
@@ -16,9 +15,8 @@ from django.utils import timezone
 
 #local
 from .models import Account,AccountName,UserDetail,Status,Sale,Customer
-from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm
-from .functions import SearchExistent
-
+from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm, SaleForm
+from .functions import SearchExistent, UpdateAccount
 
 
 ## Login - Logour
@@ -183,8 +181,6 @@ def LayoffLayonAccountFunc(request,account_name_id,email,status):
     for layoff in account:
         layoff.status_id=status
         layoff.save()
-    # account.status_id= status
-    # account.save()
     messages.success(request, layoff_message)
     return HttpResponseRedirect(reverse('accounts:list_account',))
 
@@ -197,28 +193,34 @@ def DetailAccountFunc(request, pk):
         'detail':detail
     })
 
-def SaleFunc(request):
-    customer = request.POST["customer"]
-
-    is_email = False
-    is_phone = False
-    # now = datetime.now()
-    #check if data is email or phone number
-    if customer.isnumeric():
-        is_phone = True
-    else:
-        is_email = True
-    
+def SaleFunc(request,customer=None):
     try:
+        if customer == None:
+            customer = request.POST["customer"]
+        else:
+            customer = customer
+
+        is_email = False
+        is_phone = False
+        # now = datetime.now()
+        #check if data is email or phone number
+        if customer.isnumeric():
+            is_phone = True
+        else:
+            is_email = True
+    
             #get customer_id
         if is_email == True:
             customer_id = Customer.objects.get(email__contains=customer)
         if is_phone == True:
             customer_id = Customer.objects.get(phone__contains= customer)
-
-        # current_sales = get_object_or_404(Sale, customer_id=customer_id.id)
-        active_sales = Sale.objects.filter(customer_id=customer_id.id, expiration_date__gte=timezone.now())
-        inactive_sales = Sale.objects.filter(customer_id=customer_id.id, expiration_date__lte= timezone.now())
+        
+        #Dactivate all accoutns with expiration date <= today
+        UpdateAccount.deactivate_due(Sale,customer_id.id)
+        #find all active accounts
+        active_sales = Sale.objects.filter(customer_id=customer_id.id,status_id='1')
+        #find all inactive accounts
+        inactive_sales = Sale.objects.filter(customer_id=customer_id.id,status_id='2')
         return render(request,'accounts/sales.html',{
             'active_sales':active_sales,
             'inactive_sales':inactive_sales,
@@ -230,5 +232,38 @@ def SaleFunc(request):
             "error_message": "El cliente no existe, verifica que no tenga el codigo de pais"
         })
 
+def RenewSaleFunc(request,pk):
+    sale = get_object_or_404(Sale, pk=pk)
+    customer_id = Sale.objects.get(pk=pk).customer_id.id
+    form = SaleForm(request.POST or None, instance=sale)
+    if request.method == 'POST':
+        if form.is_valid:
+            form.status_id = 2
+            form.save()
+            #Dactivate all accoutns with expiration date <= today
+            UpdateAccount.deactivate_due(Sale,customer_id)
+            active_sales = Sale.objects.filter(customer_id=customer_id,status_id='1')
+            inactive_sales = Sale.objects.filter(customer_id=customer_id,status_id='2')
+            return render(request,'accounts/sales.html',{
+                'active_sales':active_sales,
+                'inactive_sales':inactive_sales,
+                'customer': customer_id
+                })
 
-    
+    else:
+        return render(request,'accounts/renew_sale.html',{
+            'form':form,
+            'sale':sale
+        })
+
+def NewSaleFunc(request, pk):
+    form = SaleForm
+    account_name = AccountName.objects.all()
+    disponible_accounts = Account.objects.filter(customer_id=None, expiration_date__gt=timezone.now())
+
+    return render(request,'accounts/new_sale.html',{
+        'form':form,
+        'customer_id': pk,
+        'account_name':account_name,
+        'disponible_accounts':disponible_accounts
+    })

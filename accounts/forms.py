@@ -81,5 +81,26 @@ class FindCustomer(forms.ModelForm):
 
     class Meta:
         model = Customer
-
         fields =['email', 'phone']
+
+class SaleForm(forms.ModelForm):
+
+    class Meta:
+        model = Sale
+        fields = '__all__'
+    
+        labels={
+            'payment_amount':'Monto de Pago',
+            'bank_id': 'N° de Cuenta',
+            'payment_method_id': 'Forma de Pago',
+            'expiration_date': 'Duración',
+            'invoice': 'Comprobante'
+        }
+
+        widgets ={
+            'user_seller_id': forms.Select(attrs={'class':'form-select'}),
+            'payment_amount': forms.NumberInput(attrs={'class': 'form-control','id':'recipient-name'}),
+            'payment_method_id': forms.Select(attrs={'class':'form-control'}),
+            'expiration_date': forms.DateInput(attrs={'type':'date', 'class':'form-control'}),
+            'invoice': forms.TextInput(attrs={'class':'form-control'})
+        }

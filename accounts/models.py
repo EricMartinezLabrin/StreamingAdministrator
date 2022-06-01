@@ -45,7 +45,7 @@ class Bank(models.Model):
     clabe = models.CharField(max_length=18,null=False)
 
     def __str__(self):
-        return self.card_number
+        return self.card_number + " " + self.headline
 
 class PaymentMethod(models.Model):
     description = models.CharField(max_length=40, null=False)

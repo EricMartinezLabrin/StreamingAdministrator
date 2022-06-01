@@ -1,14 +1,16 @@
 {% extends 'template.html' %}
 {% block body %}
 
-{% if active_sales or inactive_sales%}
+{{customer_id}}
+
+{% if active_sales or inactive_sales %}
 
 <h1>Detalles de {{customer.name}}</h1>
 
 <div class="buttons">
+    <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:create' customer.id %}')" class="btn btn-success">Nueva Venta</button>
     <button type="button" class="btn btn-primary">Primary</button>
     <button type="button" class="btn btn-secondary">Secondary</button>
-    <button type="button" class="btn btn-success">Success</button>
     <button type="button" class="btn btn-danger">Danger</button>
     <button type="button" class="btn btn-warning">Warning</button>
     <button type="button" class="btn btn-info">Info</button>
@@ -30,7 +32,7 @@
         {% endif %}
 
         {% for detail in active_sales %}
-        {% comment %} {% if detail.expiration_date|date:"d-M-Y" > today|date:"d-M-Y" %} {% endcomment %}
+
         <div class="detail">
             <div class="account">
                 <span>Cuenta:</span>
@@ -72,9 +74,9 @@
         </div>
 
         <div class="footer">
+            <button onclick="abrir_modal_edicion('{% url 'accounts:renew_sale' detail.id %}')" class="btn btn-success">Renovar</button>
             <button class="btn btn-secondary">Editar</button>
-            <button class="btn btn-secondary">Copiar</button>
-            <button class="btn btn-secondary">Renovar</button>
+            <button class="btn btn-secondary">Copiar</button>    
         </div>
         
         {% endfor %}
