@@ -1,14 +1,20 @@
 {% extends 'template.html' %}
 {% block body %}
+{% if available_accounts %}
+<h5> Cuentas Disponibles:</h5>
+{% for available in available_accounts %}
+{{available}}
+{% endfor %}
 
-{{customer_id}}
+{% endif %}
 
 {% if active_sales or inactive_sales %}
 
 <h1>Detalles de {{customer.name}}</h1>
-
+<h2>{{test}}</h2>
 <div class="buttons">
-    <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:create' customer.id %}')" class="btn btn-success">Nueva Venta</button>
+    <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:create' customer.id %}')"
+        class="btn btn-success">Nueva Venta</button>
     <button type="button" class="btn btn-primary">Primary</button>
     <button type="button" class="btn btn-secondary">Secondary</button>
     <button type="button" class="btn btn-danger">Danger</button>
@@ -26,9 +32,9 @@
     </div>
     <div class="body">
         {% if not active_sales %}
-        <div class="not_found"> 
+        <div class="not_found">
             <h4>No hay cuentas activas</h4>
-        </div>          
+        </div>
         {% endif %}
 
         {% for detail in active_sales %}
@@ -74,11 +80,14 @@
         </div>
 
         <div class="footer">
-            <button onclick="abrir_modal_edicion('{% url 'accounts:renew_sale' detail.id %}')" class="btn btn-success">Renovar</button>
+            <button class="btn btn-secondary">Copiar</button>
+            <button onclick="abrir_modal_edicion('{% url 'accounts:renew_sale' detail.id %}')"
+                class="btn btn-success">Renovar</button>
             <button class="btn btn-secondary">Editar</button>
-            <button class="btn btn-secondary">Copiar</button>    
+            <a href="{% url 'accounts:release' detail.id user.id%}" class="btn btn-danger">Liberar</a>
+
         </div>
-        
+
         {% endfor %}
 
     </div>
@@ -92,12 +101,11 @@
     </div>
     <div class="body">
         {% if not inactive_sales %}
-        <div class="not_found"> 
+        <div class="not_found">
             <h4>No hay cuentas inactivas</h4>
-        </div>          
+        </div>
         {% endif %}
         {% for detail in inactive_sales %}
-        {% comment %} {% if detail.expiration_date|date:"d-M-Y" <= today|date:"d-M-Y" %} {% endcomment %}
         <div class="detail">
             <div class="account">
                 <span>Cuenta:</span>
@@ -139,9 +147,9 @@
         </div>
 
         <div class="footer">
-            <button class="btn btn-secondary">Editar</button>
             <button class="btn btn-secondary">Copiar</button>
             <button class="btn btn-secondary">Renovar</button>
+            <button class="btn btn-secondary">Editar</button>
         </div>
 
         {% endfor %}
@@ -150,21 +158,7 @@
     </div>
 </section>
 
-{% elif error_message %}
-<div aria-live="polite" aria-atomic="true" class="position-relative">
-    <div class="toast-container top-0 end-0">
-        <div class="toast">
-            <div class="toast-header text-bg-danger">
-                <strong class="me-auto ">ALERTA</strong>
-                <small>ahora</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                {{error_message}}
-            </div>
-        </div>
-    </div>
-</div>
+
 
 {% endif %}
 {% endblock body %}

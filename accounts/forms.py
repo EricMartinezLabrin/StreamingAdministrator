@@ -1,6 +1,13 @@
+#python
+from dateutil.relativedelta import relativedelta
+
+#django
 from django import forms
-from .models import Account, AccountName, Sale,Customer
 from django.utils import timezone
+
+#local
+from .models import Account, AccountName, Sale,Customer
+
 
 
 #CREATE
@@ -85,6 +92,8 @@ class FindCustomer(forms.ModelForm):
 
 class SaleForm(forms.ModelForm):
 
+    new_expiration = forms.IntegerField()
+
     class Meta:
         model = Sale
         fields = '__all__'
@@ -104,3 +113,18 @@ class SaleForm(forms.ModelForm):
             'expiration_date': forms.DateInput(attrs={'type':'date', 'class':'form-control'}),
             'invoice': forms.TextInput(attrs={'class':'form-control'})
         }
+
+    # def clean_expiration(self):
+    #     """
+    #     Transform quatity of month on the form to a date
+
+    #     return correct timezone format
+    #     Exeption:
+    #         validationError - When expiration date is != of a int >= 1
+    #     """
+
+    #     expiration_date = self.cleaned_data.get('expiration_date')
+    #     if expiration_date >= 1:
+    #         expiration_date = timezone.now() + relativedelta(months=expiration_date)
+    #         return expiration_date
+    #     raise forms.ValidationError('Expiration Date must be >= than 1')

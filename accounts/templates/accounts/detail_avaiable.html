@@ -1,0 +1,30 @@
+
+                              <!-- SHOW ACCOUNTS DETAILS-->
+                              <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                                <div class="offcanvas-header">
+                                  <h3 class="offcanvas-title" id="offcanvasExampleLabel">Detalles</h3>
+                                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                  <div>
+                                    <strong><h4>{{disponible.account_name_id}} {{disponible.email}}</h4></strong>
+                                    <br>
+                                    {% for details in all_account %}
+                                    {% if details.email == disponible.email and details.account_name_id == disponible.account_name_id %}
+                                      <h5>Perfil: {{details.profile}}</h5>
+                                      <p><strong>Vencimiento Cuenta: </strong>{{details.expiration_date|date:'d-M-Y'}}</p>
+                                      <p><strong>Vencimiento Cliente:</strong>
+                                      {% for expiration_sale in sales %}
+                                      {% if details.id == expiration_sale.account_id.id  %}
+                                      {{expiration_sale.expiration_date|date:'d-M-Y' }}
+                                      
+                                      {% endif %}
+                                      {% endfor %}
+                                      </p>
+                                      <br>
+                                    {% endif %}
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                              </div>
+                          <!-- END SHOW DETAILS-->

@@ -113,8 +113,8 @@ class Sale(models.Model):
     account_id = models.ForeignKey(Account,on_delete=models.DO_NOTHING)
     status_id = models.ForeignKey(Status, on_delete=models.DO_NOTHING)
     payment_method_id = models.ForeignKey(PaymentMethod, on_delete=models.DO_NOTHING)
-    created_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    expiration_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False)
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
+    expiration_date = models.DateTimeField(auto_now=False, auto_now_add=True)
     payment_amount = models.IntegerField(null=False)
     invoice = models.CharField(max_length=20, null=False)
 

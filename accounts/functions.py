@@ -1,6 +1,8 @@
 #django
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+#local
+from .models import AccountName, Account
 
 class SearchExistent():
 
@@ -18,6 +20,16 @@ class SearchExistent():
             return False
         else:
             raise('Existe un error con esta cuenta, porfavor verificar')
+
+    def get_available_accounts(request):
+        business_id = request.user.userdetail.business
+        now = timezone.now()
+        account_names = AccountName.objects.all()
+        available_accounts = []
+        for name in account_names:
+            q = Account.objects.filter(business_id=business_id,account_name_id=name,status_id=1,customer_id=None,expiration_date__gte=now).count()
+            available_accounts.append(name.description + ": " + str(q) + " ")
+        return available_accounts
 
 
 

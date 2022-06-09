@@ -1,0 +1,63 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Renovar {{sale.account_id}} </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'accounts:renew_sale' sale.id %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-body mb-3">
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">{{form.bank_id.label}}:</label>
+                    <input list="{{form.bank_id.name}}" class="form-control" name="{{form.bank_id.name}}">
+                    <datalist name="{{form.bank_id.name}}" id="{{form.bank_id.name}}">
+                        {% for bank in form.bank_id %}
+                        <option value="">{{bank}}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_amount-name" class="col-form-label">{{form.payment_amount.label}}:</label>
+                    <input type="number" class="form-control" id="payment_amount" name={{form.payment_amount.name}}
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">{{form.payment_method_id.label}}:</label>
+                    {{form.payment_method_id}}
+                </div>
+                <div class="mb-3">
+                    <label for="expiration_date" class="col-form-label">Duración:</label>
+                    <select name="new_expiration" class="form-control" id="expiration_date">
+                        <option value="1">1 Mes</option>
+                        <option value="2">2 Meses</option>
+                        <option value="3">3 Meses</option>
+                        <option value="4">4 Meses</option>
+                        <option value="5">5 Meses</option>
+                        <option value="6">6 Meses</option>
+                        <option value="7">7 Meses</option>
+                        <option value="8">8 Meses</option>
+                        <option value="9">9 Meses</option>
+                        <option value="10">10 Meses</option>
+                        <option value="11">11 Meses</option>
+                        <option value="12">1 Año</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">{{form.invoice.label}}:</label>
+                    <input type="text" class="form-control" name="{{form.invoice.name}}">
+                </div>
+
+                <input type="hidden" value="{{form.account_id.value}}" name="{{form.account_id.name}}">
+                <input type="hidden" value="{{form.customer_id.value}}" name="{{form.customer_id.name}}">
+                <input type="hidden" value="{{user.userdetail.business.id}}" name="{{form.business.name}}">
+                <input type="hidden" value="{{user.id}}" name="{{form.user_seller_id.name}}">
+                <input type="hidden" value="1" name="{{form.status_id.name}}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Terminar Venta">
+            </div>
+        </form>
+    </div>
+</div>

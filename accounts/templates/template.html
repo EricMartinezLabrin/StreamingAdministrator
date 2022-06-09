@@ -84,7 +84,22 @@
 
         {% endblock body %}
 
-
+        {% if error_message %}
+        <div aria-live="polite" aria-atomic="true" class="position-relative">
+            <div class="toast-container top-0 end-0">
+                <div class="toast">
+                    <div class="toast-header text-bg-danger">
+                        <strong class="me-auto ">ALERTA</strong>
+                        <small>ahora</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{error_message}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="modal fade" id="edicion" role="dialog">
         </div>
     </main>
