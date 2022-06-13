@@ -1,146 +1,150 @@
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Nueva Venta </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Nueva Venta </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <form action="{% url 'accounts:create' customer_id %}" method="POST">
+      {% csrf_token %}
+      <div class="modal-body mb-3">
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label">{{form.bank_id.label}}:</label>
+          <input list="{{form.bank_id.name}}" class="form-control" name="{{form.bank_id.name}}">
+          <datalist name="{{form.bank_id.name}}" id="{{form.bank_id.name}}">
+            {% for bank in form.bank_id %}
+            <option value="">{{bank}}</option>
+            {% endfor %}
+          </datalist>
         </div>
-        <form action="{% url 'accounts:create' customer_id %}"  method="POST">
-            {% csrf_token %}
-            <div class="modal-body mb-3">
-                    
-                  <div class="mb-3">
-                    <label for="recipient-name" class="col-form-label">{{form.bank_id.label}}:</label>
-                    <input list="{{form.bank_id.name}}" class="form-control" name="{{form.bank_id.name}}">
-                    <datalist name="{{form.bank_id.name}}" id="{{form.bank_id.name}}">
-                    {% for bank in form.bank_id %}
-                    <option value="">{{bank}}</option>
-                    {% endfor %}
-                </datalist>
-                    
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="payment_amount-name" class="col-form-label">{{form.payment_amount.label}}:</label>
-                    <input type="number" class="form-control" id="payment_amount" name={{form.payment_amount.name}} required>
-                  </div>
-
-                  
-                  <div class="accordion accordion-flush" id="accordionFlushExample">
-                    
-                    {% for accounts in account_name %}
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="a{{accounts.description}}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#b{{accounts.description}}" aria-expanded="false" aria-controls="b{{accounts.description}}">
-                          {{accounts.description}}
+        <div class="mb-3">
+          <label for="payment_amount-name" class="col-form-label">{{form.payment_amount.label}}:</label>
+          <input type="number" class="form-control" id="payment_amount" name={{form.payment_amount.name}} required>
+        </div>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          {% for accounts in account_name %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="a{{accounts.description}}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#b{{accounts.description}}" aria-expanded="false"
+                aria-controls="b{{accounts.description}}">
+                {{accounts.description}}
+              </button>
+            </h2>
+            <div id="b{{accounts.description}}" class="accordion-collapse collapse"
+              aria-labelledby="a{{accounts.description}}" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body modal-dialog-scrollable">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">E-mail</th>
+                      <th scope="col">Perfil</th>
+                      <th scope="col">Vencimiento Cuenta</th>
+                      <th scope="col">#</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for disponible in disponible_accounts %}
+                    <!--show only active accounts-->
+                    {% if disponible.account_name_id.id == accounts.id and disponible.status_id.id == 1  %}
+                    <tr>
+                      <th scope="row">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="{{form.account_id.name}}"
+                            id="{{disponible.id}}" value="{{disponible.id}}" required>
+                          <label class="form-check-label" for="{{disponible.id}}">{{disponible.email}}</label>
+                        </div>
+                      </th>
+                      <td>{{disponible.profile}}</td>
+                      <td>{{disponible.expiration_date|date:"d-M-Y"}}</td>
+                      <td>
+                        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                          data-bs-target="#a{{disponible.id}}" aria-controls="offcanvasExample">
+                          Detalles
                         </button>
-                      </h2>
-                      <div id="b{{accounts.description}}" class="accordion-collapse collapse" aria-labelledby="a{{accounts.description}}" data-bs-parent="#accordionFlushExample">
-                        <div class="accordion-body modal-dialog-scrollable">
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th scope="col">E-mail</th>
-                                <th scope="col">Perfil</th>
-                                <th scope="col">Vencimiento Cuenta</th>
-                                <th scope="col">#</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                          {% for disponible in disponible_accounts %}
-                          <!--show only active accounts-->
-                          {% if disponible.account_name_id.id == accounts.id and disponible.status_id.id == 1  %}
-                              <tr>
-                                <th scope="row">
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="{{form.account_id.name}}" id="{{disponible.id}}" value="{{disponible.id}}" required>
-                                    <label class="form-check-label" for="{{disponible.id}}">{{disponible.email}}</label>
-                                  </div>
-                                </th>
-                                <td>{{disponible.profile}}</td>
-                                <td>{{disponible.expiration_date|date:"d-M-Y"}}</td>
-                                <td>
-                                  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#a{{disponible.id}}" aria-controls="offcanvasExample">
-                                    Detalles
-                                  </button>
-                                </td>
-                              </tr>
+                      </td>
+                    </tr>
 
-                              <!-- SHOW ACCOUNTS DETAILS-->
-                              <div class="offcanvas offcanvas-start" tabindex="-1" id="a{{disponible.id}}" aria-labelledby="offcanvasExampleLabel">
-                                <div class="offcanvas-header">
-                                  <h3 class="offcanvas-title" id="offcanvasExampleLabel">Detalles</h3>
-                                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                </div>
-                                <div class="offcanvas-body">
-                                  <div>
-                                    <strong><h4>{{disponible.account_name_id}} {{disponible.email}}</h4></strong>
-                                    <br>
-                                    {% for details in all_account %}
-                                    {% if details.email == disponible.email and details.account_name_id == disponible.account_name_id %}
-                                      <h5>Perfil: {{details.profile}}</h5>
-                                      <p><strong>Vencimiento Cuenta: </strong>{{details.expiration_date|date:'d-M-Y'}}</p>
-                                      <p><strong>Vencimiento Cliente:</strong>
-                                      {% for expiration_sale in sales %}
-                                      {% if details.id == expiration_sale.account_id.id  %}
-                                      {{expiration_sale.expiration_date|date:'d-M-Y' }}
-                                      
-                                      {% endif %}
-                                      {% endfor %}
-                                      </p>
-                                      <br>
-                                    {% endif %}
-                                    {% endfor %}
-                                  </div>
-                                </div>
-                              </div>
-                          <!-- END SHOW DETAILS-->
+                    <!-- SHOW ACCOUNTS DETAILS-->
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="a{{disponible.id}}"
+                      aria-labelledby="offcanvasExampleLabel">
+                      <div class="offcanvas-header">
+                        <h3 class="offcanvas-title" id="offcanvasExampleLabel">Detalles</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                      </div>
+                      <div class="offcanvas-body">
+                        <div>
+                          <strong>
+                            <h4>{{disponible.account_name_id}} {{disponible.email}}</h4>
+                          </strong>
+                          <br>
+                          {% for details in all_account %}
+                          {% if details.email == disponible.email and details.account_name_id == disponible.account_name_id %}
+                          <h5>Perfil: {{details.profile}}</h5>
+                          <p><strong>Vencimiento Cuenta: </strong>{{details.expiration_date|date:'d-M-Y'}}</p>
+                          <p><strong>Vencimiento Cliente:</strong>
+                            {% for expiration_sale in sales %}
+                            {% if details.id == expiration_sale.account_id.id  %}
+                            {{expiration_sale.expiration_date|date:'d-M-Y' }}
+
+                            {% endif %}
+                            {% endfor %}
+                          </p>
+                          <br>
                           {% endif %}
                           {% endfor %}
-                        </tbody>
-                      </table>
                         </div>
                       </div>
                     </div>
+                    <!-- END SHOW DETAILS-->
+                    {% endif %}
                     {% endfor %}
-                  </div>
-                    
-
-                  <div class="mb-3">
-                    <label for="recipient-name" class="col-form-label">{{form.payment_method_id.label}}:</label>
-                    {{form.payment_method_id}}
-                  </div>
-                  <div class="mb-3">
-                    <label for="expiration_date" class="col-form-label">Duración:</label>
-                    <select name="new_expiration" class="form-control" id="expiration_date">
-                      <option value="1">1 Mes</option>
-                      <option value="2">2 Meses</option>
-                      <option value="3">3 Meses</option>
-                      <option value="4">4 Meses</option>
-                      <option value="5">5 Meses</option>
-                      <option value="6">6 Meses</option>
-                      <option value="7">7 Meses</option>
-                      <option value="8">8 Meses</option>
-                      <option value="9">9 Meses</option>
-                      <option value="10">10 Meses</option>
-                      <option value="11">11 Meses</option>
-                      <option value="12">1 Año</option>
-                    </select>
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="recipient-name" class="col-form-label">{{form.invoice.label}}:</label>
-                    {{form.invoice}}
-                  </div>
-                  {% comment %} <input type="hidden" value="{{timezone_now}}" name="{{form.expiration_date.name}}"> {% endcomment %}
-                  <input type="hidden" value="{{customer_id}}" name="{{form.customer_id.name}}">
-                  <input type="hidden" value="{{user.userdetail.business.id}}" name="{{form.business.name}}">
-                  <input type="hidden" value="{{user.id}}" name="{{form.user_seller_id.name}}">
-                  <input type="hidden" value="1" name="{{form.status_id.name}}">
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <input type="submit" class="btn btn-primary" value="Terminar Venta">
-            </div>
-        </form>
-    </div>
+          </div>
+          {% endfor %}
+        </div>
+
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label">{{form.payment_method_id.label}}:</label>
+          {{form.payment_method_id}}
+        </div>
+        <div class="mb-3">
+          <label for="expiration_date" class="col-form-label">Duración:</label>
+          <select name="new_expiration" class="form-control" id="expiration_date">
+            <option value="1">1 Mes</option>
+            <option value="2">2 Meses</option>
+            <option value="3">3 Meses</option>
+            <option value="4">4 Meses</option>
+            <option value="5">5 Meses</option>
+            <option value="6">6 Meses</option>
+            <option value="7">7 Meses</option>
+            <option value="8">8 Meses</option>
+            <option value="9">9 Meses</option>
+            <option value="10">10 Meses</option>
+            <option value="11">11 Meses</option>
+            <option value="12">1 Año</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label">{{form.invoice.label}}:</label>
+          {{form.invoice}}
+        </div>
+        {% comment %} <input type="hidden" value="{{timezone_now}}" name="{{form.expiration_date.name}}">
+        {% endcomment %}
+        <input type="hidden" value="{{customer_id}}" name="{{form.customer_id.name}}">
+        <input type="hidden" value="{{user.userdetail.business.id}}" name="{{form.business.name}}">
+        <input type="hidden" value="{{user.id}}" name="{{form.user_seller_id.name}}">
+        <input type="hidden" value="1" name="{{form.status_id.name}}">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Terminar Venta">
+      </div>
+    </form>
+  </div>
 </div>

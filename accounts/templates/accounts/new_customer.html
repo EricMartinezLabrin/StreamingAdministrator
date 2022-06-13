@@ -1,0 +1,54 @@
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Crear Nuevo Cliente</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <form action="{% url 'accounts:new_customer' %}" method="POST">
+      {% csrf_token %}
+      <div class="modal-body">
+
+        <div class="mb-3">
+          <label for="name" class="col-form-label">{{form.name.label}}:</label>
+          {{form.name}}
+        </div>
+        <div class="mb-3">
+          <label for="last_name" class="col-form-label">{{form.last_name.label}}:</label>
+          {{form.last_name}}
+        </div>
+        <div class="mb-3">
+          <label for="email" class="col-form-label">{{form.email.label}}:</label>
+          {{form.email}}
+        </div>
+        <div class="mb-3">
+          <label for="phone" class="col-form-label">{{form.phone.label}}:</label>
+          {{form.phone}}
+        </div>
+        <div class="mb-3">
+          <label for="lada" class="col-form-label">{{form.lada.label}}:</label>
+          {{form.lada}}
+        </div>
+        <div class="mb-3">
+          <label for="country" class="col-form-label">{{form.country.label}}:</label>
+          {{form.country}}
+        </div>
+
+        <div class="mb-3">
+          <label for="a{{form.referred_by.name}}" class="col-form-label">{{form.referred_by.label}}:</label>
+          <input list="{{form.referred_by.name}}" class="form-control" name="{{form.referred_by.name}}" id="a{{form.referred_by.name}}">
+          <datalist name="{{form.referred_by.name}}" id="{{form.referred_by.name}}">
+            {% for key,value in customers.items %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %} 
+          </datalist>
+        </div>
+
+        <input type="hidden" value="{{user.userdetail.business.id}}" name="{{form.business.name}}">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Crear</button>
+      </div>
+    </form>
+  </div>
+</div>

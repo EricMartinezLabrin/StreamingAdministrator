@@ -1,17 +1,29 @@
+<!--TEMPLATE-->
 {% extends 'template.html' %}
 {% block body %}
+
+<!--AVAILABLE ACCOUNTS-->
 {% if available_accounts %}
 <h5> Cuentas Disponibles:</h5>
+<p>
 {% for available in available_accounts %}
 {{available}}
 {% endfor %}
-
+</P>
 {% endif %}
 
-{% if active_sales or inactive_sales %}
+<!--CREATE NEW CUSTOMER-->
+{% if new_client %}
+<H1>Ventas</H1>
+<br>
+<button type="button" onclick="abrir_modal_edicion('{% url 'accounts:new_customer' %}')" class="btn btn-success">Crear Nuevo Cliente</button>
+{% endif %}
+
+<!--CUSTOMER ORDERS DETAIL-->
+{% if not new_client %}
 
 <h1>Detalles de {{customer.name}}</h1>
-<h2>{{test}}</h2>
+
 <div class="buttons">
     <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:create' customer.id %}')"
         class="btn btn-success">Nueva Venta</button>
@@ -25,7 +37,6 @@
 
     <button type="button" class="btn btn-link">Link</button>
 </div>
-
 <section class="activas">
     <div class="header">
         <h4 class="modal-title">Cuentas Activas</h4>
@@ -76,6 +87,10 @@
                 <span>Vencimiento Cuenta:</span>
                 <p>{{detail.account_id.expiration_date|date:'d-M-Y'}}</p>
             </div>
+            <div class="user_seller_id">
+                <span>Modificado por:</span>
+                <p>{{detail.user_seller_id}}</p>
+            </div>
 
         </div>
 
@@ -83,7 +98,8 @@
             <button class="btn btn-secondary">Copiar</button>
             <button onclick="abrir_modal_edicion('{% url 'accounts:renew_sale' detail.id %}')"
                 class="btn btn-success">Renovar</button>
-            <button class="btn btn-secondary">Editar</button>
+            <button onclick="abrir_modal_edicion('{% url 'accounts:update_sale' detail.id %}')" class="btn btn-warning">Editar</button>
+            <button onclick="abrir_modal_edicion('{% url 'accounts:change_sale' detail.id %}')" class="btn btn-info">Cambiar</button>
             <a href="{% url 'accounts:release' detail.id user.id%}" class="btn btn-danger">Liberar</a>
 
         </div>
@@ -143,13 +159,10 @@
                 <span>Vencimiento Cuenta:</span>
                 <p>{{detail.account_id.expiration_date|date:'d-M-Y'}}</p>
             </div>
-
-        </div>
-
-        <div class="footer">
-            <button class="btn btn-secondary">Copiar</button>
-            <button class="btn btn-secondary">Renovar</button>
-            <button class="btn btn-secondary">Editar</button>
+            <div class="user_seller_id">
+                <span>Modificado por:</span>
+                <p>{{detail.user_seller_id}}</p>
+            </div>
         </div>
 
         {% endfor %}

@@ -27,12 +27,14 @@ class AccountName(models.Model):
 class Customer(models.Model):
     business = models.ForeignKey(Business, on_delete=models.DO_NOTHING)
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
-    name = models.CharField(max_length=40)
-    last_name = models.CharField(max_length=50)
-    email  = models.EmailField(max_length=50, unique=True)
-    phone = models.CharField(validators = [phoneNumberRegex],max_length=16, unique=True, null=False, blank=False)
+    name = models.CharField(max_length=40,null=True, blank=True)
+    last_name = models.CharField(max_length=50,null=True, blank=True)
+    email  = models.EmailField(max_length=50,null=True, blank=True)
+    phone = models.CharField(validators = [phoneNumberRegex],max_length=16, null=False, blank=False)
     lada = models.IntegerField()
     country  = models.CharField(max_length=50, null=False)
+    referred_by = models.IntegerField(null=True, blank=True)
+    reward_used = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -114,9 +116,10 @@ class Sale(models.Model):
     status_id = models.ForeignKey(Status, on_delete=models.DO_NOTHING)
     payment_method_id = models.ForeignKey(PaymentMethod, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
-    expiration_date = models.DateTimeField(auto_now=False, auto_now_add=True)
+    expiration_date = models.DateTimeField(auto_now=False, auto_now_add=False)
     payment_amount = models.IntegerField(null=False)
     invoice = models.CharField(max_length=20, null=False)
+    former_sale = models.IntegerField(default=None)
 
     def __str__(self):
         return self.customer_id.phone

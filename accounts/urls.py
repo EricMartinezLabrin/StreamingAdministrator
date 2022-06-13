@@ -17,6 +17,9 @@ urlpatterns = [
     path("list_account/detail/<int:pk>/", login_required(views.DetailAccountFunc), name="detail"),
     path("sales/", login_required(views.SaleFunc),name="sales"),
     path("sales/renew/<int:pk>/", login_required(views.RenewSale), name="renew_sale"),
+    path("sales/update/<int:pk>/", login_required(views.UpdateSale), name="update_sale"),
+    path("sales/update/change_sale/<int:pk>/", login_required(views.ChangeSaleFunc), name="change_sale"),
     path("sales/create/<int:pk>", login_required(views.NewSaleFunc), name='create'),
+    path("customer/create/", login_required(views.NewCustomerFunc), name='new_customer'),
     path("release/<int:pk>/<int:user>/", login_required(views.ReleaseAccountFunc), name='release')
     ]

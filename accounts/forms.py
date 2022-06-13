@@ -113,18 +113,49 @@ class SaleForm(forms.ModelForm):
             'expiration_date': forms.DateInput(attrs={'type':'date', 'class':'form-control'}),
             'invoice': forms.TextInput(attrs={'class':'form-control'})
         }
+class ChangeSaleForm(forms.ModelForm):
 
-    # def clean_expiration(self):
-    #     """
-    #     Transform quatity of month on the form to a date
+    class Meta:
+        model = Sale
+        fields = ['account_id']
 
-    #     return correct timezone format
-    #     Exeption:
-    #         validationError - When expiration date is != of a int >= 1
-    #     """
 
-    #     expiration_date = self.cleaned_data.get('expiration_date')
-    #     if expiration_date >= 1:
-    #         expiration_date = timezone.now() + relativedelta(months=expiration_date)
-    #         return expiration_date
-    #     raise forms.ValidationError('Expiration Date must be >= than 1')
+class UpdateSaleForm(forms.ModelForm):
+
+    class Meta:
+        model = Sale
+        fields= ['expiration_date']
+
+        labels={
+            'expiration_date': 'Fecha de Vencimiento'
+        }
+
+        widgets={
+            'expiration_date': forms.DateInput(attrs={'type':'date', 'class':'form-control'})
+        }
+
+class NewCustomerForm(forms.ModelForm):
+
+    class Meta:
+        model = Customer
+        fields= '__all__'
+
+        labels={
+            'name': 'Nombre',
+            'last_name':'Apellido',
+            'email':'E-Mail',
+            'phone':'Celular',
+            'lada':'Lada',
+            'country': 'País',
+            'referred_by': 'Recomendado por'
+        }
+
+        widgets={
+            'name': forms.TextInput(attrs={'class':'form-control','id':'name'}),
+            'last_name': forms.TextInput(attrs={'class':'form-control','id':'last_name'}),
+            'email': forms.EmailInput(attrs={'class':'form-control','id':'email'}),
+            'phone': forms.NumberInput(attrs={'class':'form-control','id':'phone'}),
+            'lada': forms.NumberInput(attrs={'class':'form-control','id':'lada'}),
+            'country': forms.TextInput(attrs={'class':'form-control','id':'country'}),
+            'referred_by': forms.NumberInput(attrs={'class':'form-control','id':'referred_by'})
+        }

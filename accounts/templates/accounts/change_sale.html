@@ -1,0 +1,97 @@
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Cambiar Cuenta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <form action="{% url 'accounts:change_sale' current_sale.id %}" method="POST">
+            {% csrf_token %}
+
+            <div class="modal-body mb-3">
+                <div class="mb-3">
+                    <h2>Selecciona una Cuenta</h2>
+                    <br>
+                    <p>
+                        <strong>Cuenta Actual: </strong> {{current_sale.account_id.email}}
+                        <strong>Perfil: </strong> {{current_sale.account_id.profile}}
+                    </p>
+                    <p><strong>Vencimiento del cliente: </strong> {{current_sale.expiration_date|date:'d-M-Y'}}</p>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">E-mail</th>
+                                <th scope="col">Perfil</th>
+                                <th scope="col">Vencimiento Cuenta</th>
+                                <th scope="col">#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for disponible in avaiable_to_change %}
+                            <!--show only active accounts-->
+                            <tr>
+                                <th scope="row">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{form.account_id.name}}"
+                                            id="{{disponible.id}}" value="{{disponible.id}}" required>
+                                        <label class="form-check-label"
+                                            for="{{disponible.id}}">{{disponible.email}}</label>
+                                    </div>
+                                </th>
+                                <td>{{disponible.profile}}</td>
+                                <td>{{disponible.expiration_date|date:"d-M-Y"}}</td>
+                                <td>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#a{{disponible.id}}" aria-controls="offcanvasExample">
+                                        Detalles
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- SHOW ACCOUNTS DETAILS-->
+                            <div class="offcanvas offcanvas-start" tabindex="-1" id="a{{disponible.id}}"
+                                aria-labelledby="offcanvasExampleLabel">
+                                <div class="offcanvas-header">
+                                    <h3 class="offcanvas-title" id="offcanvasExampleLabel">Detalles</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <div>
+                                        <strong>
+                                            <h4>{{disponible.account_name_id}} {{disponible.email}}</h4>
+                                        </strong>
+                                        <br>
+                                        {% for details in all_account %}
+                                        {% if details.email == disponible.email and details.account_name_id == disponible.account_name_id %}
+                                        <h5>Perfil: {{details.profile}}</h5>
+                                        <p><strong>Vencimiento Cuenta: </strong>{{details.expiration_date|date:'d-M-Y'}}
+                                        </p>
+                                        <p><strong>Vencimiento Cliente:</strong>
+                                            {% for expiration_sale in sales %}
+                                            {% if details.id == expiration_sale.account_id.id  %}
+                                            {{expiration_sale.expiration_date|date:'d-M-Y' }}
+
+                                            {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <br>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END SHOW DETAILS-->
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -2,6 +2,7 @@
 import datetime
 from http.client import NOT_FOUND
 from platform import release
+from uuid import UUID
 from xml.dom import NotFoundErr
 from dateutil.relativedelta import relativedelta
 
@@ -22,8 +23,8 @@ from django.utils import timezone
 
 
 #local
-from .models import Account,AccountName,UserDetail,Status,Sale,Customer
-from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm, SaleForm
+from .models import Account,AccountName,UserDetail,Status,Sale,Customer,PaymentMethod, Bank
+from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm, SaleForm, UpdateSaleForm, ChangeSaleForm, NewCustomerForm
 from .functions import SearchExistent, UpdateAccount
 
 
@@ -59,7 +60,7 @@ def ActiveAccountFunc(request):
     """
     Show all active accounts filtered by Bussiness ID of person are looking for And Pagintate by 10
     """
-    business_id = request.user.userdetail.business
+    business_id = SearchExistent.get_business_id(request)
 
     form = FilterAccountForm()
     if request.method == 'POST':
@@ -177,50 +178,45 @@ def DetailAccountFunc(request, pk):
     })
 
 def SaleFunc(request,customer=None):
-    available_accounts = SearchExistent.get_available_accounts(request)
-    try:
-        if customer == None:
-            customer = request.POST["customer"]
-        else:
-            customer = customer
+    if request.method=='POST':
+        try:
+            if customer == None:
+                customer = request.POST["customer"]
+            else:
+                customer = customer
 
-        is_email = False
-        is_phone = False
-        # now = datetime.now()
-        #check if data is email or phone number
-        if customer.isnumeric():
-            is_phone = True
-        else:
-            is_email = True
-    
-            #get customer_id
-        if is_email == True:
-            customer_id = Customer.objects.get(email__contains=customer)
-        if is_phone == True:
-            customer_id = Customer.objects.get(phone__contains= customer)
+            is_email = False
+            is_phone = False
+            # now = datetime.now()
+            #check if data is email or phone number
+            if customer.isnumeric():
+                is_phone = True
+            else:
+                is_email = True
         
-        #Dactivate all accoutns with expiration date <= today
-        UpdateAccount.deactivate_due(Sale,customer_id.id)
-        #find all active accounts
-        active_sales = Sale.objects.filter(customer_id=customer_id.id,status_id='1')
-        #find all inactive accounts
-        inactive_sales = Sale.objects.filter(customer_id=customer_id.id,status_id='2')
-        return render(request,'accounts/sales.html',{
-            'active_sales':active_sales,
-            'inactive_sales':inactive_sales,
-            'customer': customer_id,
-            'available_accounts': available_accounts,
-            'available_accounts_count': available_accounts
-            })
+                #get customer_id
+            if is_email == True:
+                customer_id = Customer.objects.get(email__contains=customer)
+            if is_phone == True:
+                customer_id = Customer.objects.get(phone__contains= customer)
             
-    except:
-        return render(request, "accounts/sales.html",{
-            "error_message": "El cliente no existe, verifica que no tenga el codigo de pais"
-        })
+
+            sale_page = SearchExistent.get_customer_sales(request,customer_id=customer_id)
+            return render(request,'accounts/sales.html',sale_page)
+                
+        except:
+            return render(request, "accounts/sales.html",{
+                "error_message": "El cliente no existe, verifica que no tenga el codigo de pais"
+            })
+    return render(request,'accounts/sales.html',{
+        'available_accounts':SearchExistent.get_available_accounts(request),
+        'new_client': True
+    })
 
 def RenewSale(request,pk):
     sale = Sale.objects.get(pk=pk)
     form = SaleForm(request.POST or None, instance=sale)
+    available_accounts = SearchExistent.get_available_accounts(request)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -271,7 +267,8 @@ def RenewSale(request,pk):
             return render(request,'accounts/sales.html',{
                 'active_sales':active_sales,
                 'inactive_sales':inactive_sales,
-                'customer': customer_id
+                'customer': customer_id,
+                'available_accounts':available_accounts
                 })
         return HttpResponse(form)
     else:
@@ -282,7 +279,8 @@ def RenewSale(request,pk):
         })
 
 def NewSaleFunc(request, pk):
-    business_id = request.user.userdetail.business
+    available_accounts = SearchExistent.get_available_accounts(request)
+    business_id = SearchExistent.get_business_id(request)
     form = SaleForm
     account_name = AccountName.objects.all()
     all_account = Account.objects.all()
@@ -338,7 +336,8 @@ def NewSaleFunc(request, pk):
                 return render(request,'accounts/sales.html',{
                     'active_sales':active_sales,
                     'inactive_sales':inactive_sales,
-                    'customer': customer_id
+                    'customer': customer_id,
+                    'available_accounts':available_accounts
                     })
         return HttpResponse("<h1>Hay un error en la información</h1><p>Porfavor corroborelo y vuelva a intentar</p>")
 
@@ -389,15 +388,170 @@ def ReleaseAccountFunc(request, pk, user):
     # release account
     release = Account.objects.filter(pk=account_id).update(customer_id=None,modified_by=user)
 
-    #success message
-    release_message= "La cuenta fue liberada correctamente"
-    messages.success(request, release_message)
     #find all active accounts
     active_sales = Sale.objects.filter(customer_id=sale.customer_id.id,status_id='1')
     #find all inactive accounts
     inactive_sales = Sale.objects.filter(customer_id=sale.customer_id.id,status_id='2')
+
+    #success message
+    release_message= "La cuenta fue liberada correctamente"
+    messages.success(request, release_message)
     return render(request,'accounts/sales.html',{
         'active_sales':active_sales,
         'inactive_sales':inactive_sales,
         'customer': sale.customer_id
         })
+
+def UpdateSale(request,pk):
+    sale = Sale.objects.get(pk=pk)
+    form = UpdateSaleForm(request.POST or None, instance=sale)
+    available_accounts = SearchExistent.get_available_accounts(request)
+
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+
+            #Dactivate all accoutns with expiration date <= today
+            UpdateAccount.deactivate_due(Sale,sale.customer_id)
+            active_sales = Sale.objects.filter(customer_id=sale.customer_id,status_id='1')
+            inactive_sales = Sale.objects.filter(customer_id=sale.customer_id,status_id='2')
+            return render(request,'accounts/sales.html',{
+                'active_sales':active_sales,
+                'inactive_sales':inactive_sales,
+                'customer': sale.customer_id,
+                'available_accounts':available_accounts
+                })
+        return HttpResponse(form)
+
+    return render(request,'accounts/update_sale.html',{
+        'form':form,
+        'sale':sale,
+    })
+
+def ChangeSaleFunc(request,pk):
+    sale = Sale.objects.get(pk=pk)
+    business_id = SearchExistent.get_business_id(request)
+    account_name_id = sale.account_id.account_name_id
+    customer_id = None
+    status_id = 1 #active
+    inactive_status_id = Status.objects.get(pk=2)
+    payment_method_id = PaymentMethod.objects.get(pk=6)#cambio
+    bank_id = Bank.objects.get(pk=1)#Other
+    now = timezone.now()
+    form = ChangeSaleForm(request.POST or None)
+    sales = Sale.objects.filter(business_id=business_id,status_id=1)
+    #fin details for all accounts
+    all_account = Account.objects.filter(
+        business_id=business_id,
+        account_name_id=account_name_id,
+        status_id=status_id
+        )
+    #find available accounts
+    avaiable_to_change = Account.objects.filter(
+        business_id=business_id,
+        account_name_id=account_name_id,
+        customer_id = customer_id,
+        status_id=status_id,
+        expiration_date__gt=now
+        )
+
+    if request.method=='POST':
+        if form.is_valid():
+            account_id = form.cleaned_data['account_id']
+            business = sale.business
+            user_seller_id = sale.user_seller_id
+            bank_id = bank_id #Other
+            customer_id = sale.customer_id
+            status_id = sale.status_id
+            payment_method_id = payment_method_id #Cambio
+            created_at = timezone.now()
+            expiration_date = sale.expiration_date
+            payment_amount = 0
+            invoice = UUID
+            former_sale = sale.id
+
+            new_sell = Sale.objects.create(
+                account_id=account_id,
+                business=business,
+                user_seller_id=user_seller_id,
+                bank_id=bank_id,
+                customer_id=customer_id,
+                status_id=status_id,
+                payment_method_id=payment_method_id,
+                created_at=created_at,
+                expiration_date=expiration_date,
+                payment_amount=payment_amount,
+                invoice=invoice,
+                former_sale=former_sale
+            )
+
+            #suspend old
+            sale.status_id=inactive_status_id #inactive
+            sale.save()
+
+            #Check sold in Accounts
+            accounts = Account.objects.get(pk=account_id.id)
+            accounts.customer_id = customer_id.id
+            accounts.save()
+
+            sales_page = SearchExistent.get_customer_sales(request,sale.customer_id)
+            return render(request,'accounts/sales.html',sales_page)
+
+
+    return render(request,'accounts/change_sale.html',{
+        'avaiable_to_change':avaiable_to_change,
+        'form':form,
+        'all_account':all_account,
+        'sales':sales,
+        'current_sale': sale
+    })
+    
+def NewCustomerFunc(request):
+    form = NewCustomerForm(request.POST or None)
+    template_name = 'accounts/new_customer.html'
+    success_url= 'accounts/sales.html'
+    customers= {}
+    for customer in Customer.objects.filter(business=request.user.userdetail.business):
+        customers[customer.id]=customer.phone,customer.email
+
+    if request.method=='POST':
+        if form.is_valid():
+            phone = form.cleaned_data['phone']
+            business = form.cleaned_data['business']
+            if form.cleaned_data['name'] != None:
+                name = form.cleaned_data['name'].lower()
+            else:
+                name = form.cleaned_data['name']
+            if form.cleaned_data['last_name'] != None:  
+                last_name = form.cleaned_data['last_name'].lower()
+            else:
+                last_name = form.cleaned_data['last_name']
+            if form.cleaned_data['email'] != None:  
+                email = form.cleaned_data['email'].lower()
+            else:
+                email = form.cleaned_data['email']
+            country = form.cleaned_data['country'].lower()
+            referred_by = form.cleaned_data['referred_by']
+            lada = form.cleaned_data['lada']
+            try:
+                exist = get_object_or_404(Customer,phone=phone, business=business)
+            except(Http404):
+                create_customer = Customer.objects.create(
+                    phone=phone,
+                    business=business,
+                    name=name,
+                    last_name=last_name,
+                    email=email,
+                    country=country,
+                    referred_by=referred_by,
+                    lada=lada
+                )
+                customer = Customer.objects.get(phone=phone, business=business)
+                sale_page = SearchExistent.get_customer_sales(request,customer)
+                return render(request,success_url,sale_page)
+    return render(request,template_name,{
+        'form':form,
+        'customers':customers
+    })
+    
