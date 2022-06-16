@@ -96,7 +96,15 @@ class SaleForm(forms.ModelForm):
 
     class Meta:
         model = Sale
-        fields = '__all__'
+        fields = ['business',
+        'user_seller_id',
+        'bank_id',
+        'customer_id',
+        'account_id',
+        'status_id',
+        'payment_method_id',
+        'payment_amount',
+        'invoice']
     
         labels={
             'payment_amount':'Monto de Pago',

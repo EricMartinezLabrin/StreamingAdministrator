@@ -95,7 +95,8 @@
         </div>
 
         <div class="footer">
-            <button class="btn btn-secondary">Copiar</button>
+            <textarea class="copy" id="textArea"> http://cuentasmexico.mx/customers/{{customer.id}}/ </textarea>
+            <button onclick="copyToClipBoard()" class="btn btn-primary">Copiar</button>
             <button onclick="abrir_modal_edicion('{% url 'accounts:renew_sale' detail.id %}')"
                 class="btn btn-success">Renovar</button>
             <button onclick="abrir_modal_edicion('{% url 'accounts:update_sale' detail.id %}')" class="btn btn-warning">Editar</button>
@@ -181,5 +182,16 @@
     $(document).ready(function () {
         $('.toast').toast('show');
     });
+</script>
+<script>
+    function copyToClipBoard() {
+
+        var content = document.getElementById('textArea');
+        
+        content.select();
+        document.execCommand('copy');
+    
+        alert("Copiado!");
+    }
 </script>
 {% endblock extrajs %}

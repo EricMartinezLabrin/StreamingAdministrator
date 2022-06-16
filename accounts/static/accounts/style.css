@@ -185,3 +185,7 @@ table a {
 .gold {
     color: #efb810;
 }
+
+textarea.copy{
+    display:none;
+}

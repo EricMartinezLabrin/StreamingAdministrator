@@ -1,10 +1,10 @@
 #python
 import datetime
-from http.client import NOT_FOUND
 from platform import release
 from uuid import UUID
 from xml.dom import NotFoundErr
 from dateutil.relativedelta import relativedelta
+
 
 #django
 from django.forms import DateTimeInput, TextInput, Widget
@@ -19,7 +19,6 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.utils import timezone
-
 
 
 #local
@@ -198,13 +197,13 @@ def SaleFunc(request,customer=None):
             if is_email == True:
                 customer_id = Customer.objects.get(email__contains=customer)
             if is_phone == True:
-                customer_id = Customer.objects.get(phone__contains= customer)
+                customer_id = Customer.objects.get(phone__contains=customer)
             
 
             sale_page = SearchExistent.get_customer_sales(request,customer_id=customer_id)
             return render(request,'accounts/sales.html',sale_page)
                 
-        except:
+        except(Http404):
             return render(request, "accounts/sales.html",{
                 "error_message": "El cliente no existe, verifica que no tenga el codigo de pais"
             })
@@ -281,15 +280,14 @@ def RenewSale(request,pk):
 def NewSaleFunc(request, pk):
     available_accounts = SearchExistent.get_available_accounts(request)
     business_id = SearchExistent.get_business_id(request)
-    form = SaleForm
+    form = SaleForm(request.POST or None)
     account_name = AccountName.objects.all()
-    all_account = Account.objects.all()
+    all_account = Account.objects.filter(business=business_id)
     disponible_accounts = Account.objects.filter(customer_id=None, expiration_date__gt=timezone.now(), business_id=business_id).order_by('expiration_date','profile')
     sales = Sale.objects.filter(business_id=business_id,status_id=1)
     
 
     if request.method=='POST':
-        form = SaleForm(request.POST)
         if form.is_valid():
             #find all values
             new_expiration = int(form.data['new_expiration'])
@@ -322,7 +320,8 @@ def NewSaleFunc(request, pk):
                     created_at=created_at,
                     expiration_date=expiration_date,
                     payment_amount=payment_amount,
-                    invoice=invoice
+                    invoice=invoice,
+                    former_sale=None
                     )
                 
                 # Put account as Sold
@@ -333,13 +332,9 @@ def NewSaleFunc(request, pk):
                 active_sales = Sale.objects.filter(customer_id=customer_id,status_id='1')
                 #find all inactive accounts
                 inactive_sales = Sale.objects.filter(customer_id=customer_id,status_id='2')
-                return render(request,'accounts/sales.html',{
-                    'active_sales':active_sales,
-                    'inactive_sales':inactive_sales,
-                    'customer': customer_id,
-                    'available_accounts':available_accounts
-                    })
-        return HttpResponse("<h1>Hay un error en la información</h1><p>Porfavor corroborelo y vuelva a intentar</p>")
+                get_sale = SearchExistent.get_customer_sales(request, customer_id)
+                return render(request,'accounts/sales.html', get_sale)
+        return HttpResponse("Hay un error en el formulario, favor de verificar la información")
 
     else:
         return render(request,'accounts/new_sale.html',{
@@ -554,4 +549,5 @@ def NewCustomerFunc(request):
         'form':form,
         'customers':customers
     })
-    
+
+
