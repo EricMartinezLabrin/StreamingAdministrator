@@ -1,19 +1,16 @@
 #python
 import datetime
-from platform import release
 from uuid import UUID
-from xml.dom import NotFoundErr
 from dateutil.relativedelta import relativedelta
 
 
 #django
-from django.forms import DateTimeInput, TextInput, Widget
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import UpdateView
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import permission_required
@@ -22,8 +19,8 @@ from django.utils import timezone
 
 
 #local
-from .models import Account,AccountName,UserDetail,Status,Sale,Customer,PaymentMethod, Bank
-from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm, SaleForm, UpdateSaleForm, ChangeSaleForm, NewCustomerForm
+from .models import Account,AccountName,UserDetail,Status,Sale,Customer,PaymentMethod, Bank, Cupon
+from .forms import CreateAccountForm, FilterAccountForm, EditAccountForm, SaleForm, UpdateSaleForm, ChangeSaleForm, NewCustomerForm, RedeemForm, FindCuponForm
 from .functions import SearchExistent, UpdateAccount
 
 
@@ -53,6 +50,42 @@ class DashboardView(generic.TemplateView):
     """
     model = User
     template_name = 'accounts/dashboard.html'
+    today_sales=514
+    year_sales=today_sales*365
+    comparation = 3.5
+    goal = 75
+
+    def get_color(goal):
+        if goal <= 30:
+            return 'danger'
+        elif goal >=31 and goal <= 70:
+            return 'warning'
+        else:
+            return 'success'
+
+    def get_best_sellers():
+        best_seller = {
+            'Netflix':{
+            'value':500,
+            'percentage':25
+            },
+            'Spotify':{
+            'value':2000,
+            'percentage': 75
+            }
+        }
+        return best_seller
+
+    def get_context_data(self, **kwargs):
+        goal = self.goal
+        context = super().get_context_data(**kwargs)
+        context['today_sale'] = self.today_sales
+        context['year_sale'] = self.year_sales
+        context['comparation'] = self.comparation
+        context['goal'] = goal
+        context['color'] = DashboardView.get_color(goal)
+        context['best_sellers'] = DashboardView.get_best_sellers()
+        return context
 
 @permission_required('accounts.view_account', raise_exception=True)
 def ActiveAccountFunc(request):
@@ -60,7 +93,7 @@ def ActiveAccountFunc(request):
     Show all active accounts filtered by Bussiness ID of person are looking for And Pagintate by 10
     """
     business_id = SearchExistent.get_business_id(request)
-
+    available_accounts = SearchExistent.get_available_accounts(request)
     form = FilterAccountForm()
     if request.method == 'POST':
         account_name_id=request.POST['account_name_id']
@@ -80,25 +113,27 @@ def ActiveAccountFunc(request):
                 status_id=status_id
                 )
             #Set Up Pagination
-        p =Paginator(accounts, 10)
+        p =Paginator(accounts, 9)
         page = request.GET.get('page')
         venues = p.get_page(page)
         return render(request, "accounts/active_accounts.html",{
             "accounts": accounts,
             "venues": venues,
-            "form": form
+            "form": form,
+            'available_accounts':available_accounts
         })
     else:
         active = 1
         accounts = Account.objects.filter(status_id=active, business_id= business_id)
             #Set Up Pagination
-        p =Paginator(accounts, 10)
+        p =Paginator(accounts, 9)
         page = request.GET.get('page')
         venues = p.get_page(page)
         return render(request, "accounts/active_accounts.html",{
             "accounts": accounts,
             "venues": venues,
-            "form": form
+            "form": form,
+            'available_accounts':available_accounts
         })
 
 def CreateAccounts(request):
@@ -355,17 +390,14 @@ def LayoffLayonAccountFunc(request,account_name_id,email,status):
     account = Account.objects.filter(account_name_id=account_name_id,email=email)
     if status == 1:
         status = Status.objects.get(description='inactive')
-        layoff_message= f"La cuenta email {email} fue suspendida Correctamente"
 
     else:
         status = Status.objects.get(description='active')
-        layoff_message= f"La cuenta email {email} fue Reactivada Correctamente"
 
     
     for layoff in account:
         layoff.status_id=status
         layoff.save()
-    messages.success(request, layoff_message)
     return HttpResponseRedirect(reverse('accounts:list_account',))
 
 def ReleaseAccountFunc(request, pk, user):
@@ -551,3 +583,107 @@ def NewCustomerFunc(request):
     })
 
 
+def FindCuponFunc(request):
+    """
+    Search Cupon to show info
+    """
+    form = FindCuponForm(request.POST or None)
+    if request.method=='POST':
+        if form.is_valid():
+            try:
+                cupon = form.cleaned_data['cupon'].lower()
+                cupon_data = Cupon.objects.get(cupon=cupon)
+            except(ValueError,Cupon.DoesNotExist):
+                return HttpResponse('<h1>El cupon no existe, porfavor vuelva a intentar</h1>')
+            else:
+                business= SearchExistent.get_business_id(request)
+                customer_list = Customer.objects.filter(business=business)
+                disponible_accounts = Account.objects.filter(
+                    business=business, 
+                    account_name_id=cupon_data.account, 
+                    customer_id__isnull = True,
+                    status_id = 1,
+                    expiration_date__gte=timezone.now()
+                    )
+                detail_account = {}
+                sales = Sale.objects.filter(business=business,status_id=1)
+                old_email = None
+                for detail in disponible_accounts:
+                    new_email = detail.email
+                    if old_email != new_email:
+                        details = Account.objects.filter(email=detail.email,account_name_id=detail.account_name_id)
+                        detail_account[new_email]=details
+                        old_email = detail.email
+                    else:
+                        continue
+                    
+                data_render = {
+                        'cupon_data': cupon_data,
+                        'customer_list':customer_list,
+                        'form': RedeemForm,
+                        'disponible_accounts': disponible_accounts,
+                        'detail_account':detail_account,
+                        'sales':sales
+                    }
+                if cupon_data.customer != None:
+                    data_render['status'] = "Used"
+
+                return render(request,'accounts/redeem.html', data_render)
+
+    return render(request,'accounts/find_cupon.html',{
+    'form': form
+    })
+
+
+def RedeemFunc(request,pk):
+    """
+    Create a new sale, Change Account Status, and Mak Coupon has used
+    """
+    form = RedeemForm(request.POST)
+    cupon = Cupon.objects.get(pk=pk)
+    business= SearchExistent.get_business_id(request)
+    user_seller_id = request.user
+    bank_id = Bank.objects.get(pk=1)#Other
+    status_id = Status.objects.get(pk=1)#Active
+    payment_method_id = PaymentMethod.objects.get(pk=4)#Cupon
+    if request.method=='POST':
+        if form.is_valid():
+            customer_id = form.cleaned_data['customer']
+            account_id = form.cleaned_data['account_selected']
+            now = timezone.now()
+            expiration_sale = now + relativedelta(months=cupon.expiration_time)
+            if  cupon.discount == 100:
+                payment_amount = 0
+            else:
+                payment_amount = form.cleaned['payment_amount']
+            create_sale= Sale.objects.create(
+                business = business,
+                user_seller_id = user_seller_id,
+                bank_id = bank_id, #Other
+                customer_id = customer_id,
+                account_id = account_id,
+                status_id = status_id,
+                payment_method_id = payment_method_id,
+                created_at = now,
+                expiration_date = expiration_sale,
+                payment_amount = payment_amount,
+                invoice = cupon.cupon,
+                former_sale = None
+            )
+            update_account= Account.objects.get(pk=account_id.id)
+            update_account.customer_id=customer_id.id
+            update_account.modified_by=user_seller_id
+            update_account.save()
+            sale_id = Sale.objects.get(invoice=cupon.cupon)
+            cupon.customer = customer_id
+            cupon.sale = sale_id
+            cupon.account_selected = account_id
+            cupon.redemption_date = now
+            cupon.sold = 1
+            cupon.save()
+
+            sales_page = SearchExistent.get_customer_sales(request,customer_id)
+            return render(request,'accounts/sales.html',sales_page)
+    
+    return HttpResponse('<h1>Dejaste campos vacioes, porfavor vuelve a intentar</h1>')
+ 

@@ -1,0 +1,159 @@
+{% extends 'template.html' %}
+
+{% block body %}
+
+<form action="{% url 'accounts:redeem' cupon_data.id %}" method="POST">
+  {% csrf_token %}
+  <ul class="list-group">
+    <li class="list-group-item active" aria-current="true">
+      <b>Cuenta:</b>
+      {{cupon_data.account}}
+    </li>
+    <li class="list-group-item">
+      <b>Cupon:</b>
+      {{cupon_data.cupon}}
+    </li>
+    <li class="list-group-item">
+      <b>Fecha de Vencimiento:</b>
+      {{cupon_data.expiration_time}}
+    </li>
+    <li class="list-group-item">
+      <b>Descuento:</b>
+      {{cupon_data.discount}}%
+    </li>
+    <li class="list-group-item">
+      <b>Tienda:</b>
+      {{cupon_data.store}}
+      {{form.customer.name}}    </li>
+
+      <!-- If Already used-->
+    {% if status %}
+    <li class="list-group-item">
+      <b>ID. Cliente:</b>
+      {{cupon_data.customer.phone}}
+    </li>
+    <li class="list-group-item">
+      <b>Cuenta Entregada:</b>
+      {{cupon_data.account_selected.email}}
+    </li>
+    <li class="list-group-item">
+      <b>Perfil Entregado:</b>
+      {{cupon_data.account_selected.profile}}
+    </li>
+
+
+    <br>
+    <button type="submit" class="btn btn-primary" disabled>Ya fue Canjeado</button>
+    {% else %}
+
+    <!--If Not Used-->
+    <li class="list-group-item">
+      <b>
+        <label for="a{{form.customer.name}}" class="col-form-label">
+          {{form.customer.label}}:
+        </label>
+      </b>
+      <input list="{{form.customer.name}}" class="form-control" name="{{form.customer.name}}"
+        id="a{{form.customer.name}}">
+      <datalist name="{{form.customer.name}}" id="{{form.customer.name}}">
+        {% for id in customer_list %}
+        <option value="{{id.pk}}">{{id.phone}}</option>
+        {% endfor %}
+      </datalist>
+    </li>
+
+    <!--Select Available Account-->
+    <li class="list-group-item">
+      <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="a{{accounts.description}}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#b{{accounts.description}}" aria-expanded="false"
+              aria-controls="b{{accounts.description}}">
+              <b>{{cupon_data.account}} Disponibles</b>
+            </button>
+          </h2>
+          <div id="b{{accounts.description}}" class="accordion-collapse collapse"
+            aria-labelledby="a{{accounts.description}}" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body modal-dialog-scrollable">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Perfil</th>
+                    <th scope="col">Vencimiento Cuenta</th>
+                    <th scope="col">#</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for disponible in disponible_accounts %}
+                  <!--show only active accounts-->
+                  <tr>
+                    <th scope="row">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="{{form.account_selected.name}}"
+                          id="{{disponible.id}}" value="{{disponible.id}}">
+                        <label class="form-check-label" for="{{disponible.id}}">{{disponible.email}}</label>
+                      </div>
+                    </th>
+                    <td>{{disponible.profile}}</td>
+                    <td>{{disponible.expiration_date|date:"d-M-Y"}}</td>
+                    <td>
+                      <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#a{{disponible.id}}" aria-controls="offcanvasExample">
+                        Detalles
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- SHOW ACCOUNTS DETAILS-->
+                  <div class="offcanvas offcanvas-start" tabindex="-1" id="a{{disponible.id}}"
+                    aria-labelledby="offcanvasExampleLabel">
+                    <div class="offcanvas-header">
+                      <h3 class="offcanvas-title" id="offcanvasExampleLabel">Detalles</h3>
+                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                      <div>
+                        <strong>
+                          <h4>{{disponible.account_name_id}} {{disponible.email}}</h4>
+                        </strong>
+                        <br>
+                        {% for key, details in detail_account.items %}
+                        {% if key == disponible.email %}
+                        {% for expiration in details %}
+                        <h5>Perfil: {{expiration.profile}}</h5>
+                        <p><strong>Vencimiento Cuenta: </strong>{{expiration.expiration_date|date:'d-M-Y'}}</p>
+                        <p><strong>Vencimiento Cliente:</strong>
+                          {% for expiration_sale in sales %}
+                          {% if expiration.id == expiration_sale.account_id.id  %}
+                          {{expiration_sale.expiration_date|date:'d-M-Y' }}
+
+                          {% endif %}
+                          {% endfor %}
+                        </p>
+                        <br>
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <!-- END SHOW DETAILS-->
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <br>
+
+    <button type="submit" class="btn btn-primary">Canjear</button>
+    {% endif %}
+
+  </ul>
+
+
+
+  {% endblock body %}

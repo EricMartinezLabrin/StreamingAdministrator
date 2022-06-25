@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountName, Customer, Bank, PaymentMethod, Status, UserDetail, Account, Sale, Supplier, Business
+from .models import AccountName, Customer, Bank, PaymentMethod, Status, UserDetail, Account, Sale, Supplier, Business, Cupon
 
 # Register your models here.
 admin.site.register(AccountName)
@@ -12,5 +12,6 @@ admin.site.register(Supplier)
 admin.site.register(Account)
 admin.site.register(Sale)
 admin.site.register(Business)
+admin.site.register(Cupon)
 
     

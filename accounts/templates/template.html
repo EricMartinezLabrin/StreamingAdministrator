@@ -34,8 +34,20 @@
                             <a class="nav-link active" aria-current="page"
                                 href="{% url 'accounts:dashboard' %}">Inicio</a>
                         </li>
-                        <li class="nav-item">
+                       <!-- <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:sales' %}">Ventas</a>
+                        </li>-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Ventas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#" onclick="abrir_modal_edicion('{% url 'accounts:new_customer' %}')" >Nuevo Cliente</a></li>
+                                <li><a class="dropdown-item" href="#"
+                                    onclick="abrir_modal_edicion('{% url 'accounts:find_cupon' %}')">Buscar Cupon</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"

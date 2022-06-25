@@ -3,6 +3,15 @@
 {% block title %}Cuentas Disponibles{% endblock title %}
 {% block body %}
 
+<!--AVAILABLE ACCOUNTS-->
+{% if available_accounts %}
+<h5> Cuentas Disponibles:</h5>
+<p>
+{% for available in available_accounts %}
+{{available}}
+{% endfor %}
+</P>
+{% endif %}
 
 {% if not accounts %}
 <p><strong>No Hay Cuentas Disponibles</strong></p>

@@ -3,10 +3,11 @@ from dateutil.relativedelta import relativedelta
 
 #django
 from django import forms
+from django.forms import widgets
 from django.utils import timezone
 
 #local
-from .models import Account, AccountName, Sale,Customer
+from .models import Account, AccountName, Cupon, Sale,Customer, Cupon
 
 
 
@@ -166,4 +167,26 @@ class NewCustomerForm(forms.ModelForm):
             'lada': forms.NumberInput(attrs={'class':'form-control','id':'lada'}),
             'country': forms.TextInput(attrs={'class':'form-control','id':'country'}),
             'referred_by': forms.NumberInput(attrs={'class':'form-control','id':'referred_by'})
+        }
+
+class FindCuponForm(forms.ModelForm):
+
+    class Meta:
+        model = Cupon
+        fields = ['cupon']
+
+        widgets={
+            'cupon': forms.TextInput(attrs={'class':'form-control'})
+        }
+
+class RedeemForm(forms.ModelForm):
+
+    class Meta:
+        model = Cupon
+        fields = ['customer','account_selected']
+        labels={
+            'customer': 'Cliente'
+        }
+        widgets = {
+            'customer': forms.TextInput(attrs={'class':'form-control'})
         }

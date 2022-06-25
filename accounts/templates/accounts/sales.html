@@ -27,7 +27,7 @@
 <div class="buttons">
     <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:create' customer.id %}')"
         class="btn btn-success">Nueva Venta</button>
-    <button type="button" class="btn btn-primary">Primary</button>
+    <button type="button" onclick="abrir_modal_edicion('{% url 'accounts:redeem' customer.id %}')" class="btn btn-primary">Canjear Cupón</button>
     <button type="button" class="btn btn-secondary">Secondary</button>
     <button type="button" class="btn btn-danger">Danger</button>
     <button type="button" class="btn btn-warning">Warning</button>

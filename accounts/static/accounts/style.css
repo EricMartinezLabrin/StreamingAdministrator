@@ -189,3 +189,29 @@ table a {
 textarea.copy{
     display:none;
 }
+form ul.cupon{
+    list-style:none;
+}
+
+.badge-soft-success{
+    background-color: var(--verde_oscuro);
+    color: var(--verde_letras);
+}
+.badge-soft-danger{
+    background-color: var(--rojo_oscuro);
+    color: var(--rojo_letras);
+}
+.metric{
+    flex: 1 1 0
+}
+.circle{
+    
+}
+.circulo{
+    height:1rem;
+    width:1rem;
+    background:red;
+    -moz-border-radius:50px;
+    -webkit-border-radius:50px;
+    border-radius:50px;
+ }

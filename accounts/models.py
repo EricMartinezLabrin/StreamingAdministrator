@@ -37,7 +37,7 @@ class Customer(models.Model):
     reward_used = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.country
 
 class Bank(models.Model):
     business = models.ForeignKey(Business, on_delete=models.DO_NOTHING)
@@ -123,3 +123,21 @@ class Sale(models.Model):
 
     def __str__(self):
         return self.customer_id.phone
+
+class Cupon(models.Model):
+    cupon = models.CharField(max_length=8)
+    account = models.ForeignKey(AccountName, on_delete=models.DO_NOTHING)
+    status = models.ForeignKey(Status, on_delete=models.DO_NOTHING)
+    expiration_time = models.IntegerField()
+    discount = models.IntegerField()
+    store = models.ForeignKey(Business,on_delete=models.DO_NOTHING)
+    redemption_date = models.DateTimeField(null=True,blank=True, default=None)
+    creation_date = models.DateTimeField(auto_now=True)
+    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING,null=True,blank=True)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE,null=True,blank=True)
+    account_selected = models.ForeignKey(Account, on_delete=models.DO_NOTHING,null=True,blank=True)
+    paid = models.BooleanField(default=False)
+    sold = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.cupon
