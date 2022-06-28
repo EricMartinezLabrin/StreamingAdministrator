@@ -4,10 +4,10 @@
 
 {{error_message}}
 
-<div class="d-flex">
+<div class="d-flex justify-content-evenly flex-wrap ">
 
     <!--Daily Sales-->
-    <div class="metric px-3 m-4 d-flex shadow-sm p-3 mb-5 bg-warning bg-gradient rounded">
+    <div class="metric m-2  d-flex shadow p-3 mb-5 bg-body bg-gradient rounded">
         <div>
             <h6>Ventas Del Día</h6>
             <h1><b>${{today_sale|intcomma}}</b></h1>
@@ -18,12 +18,12 @@
             {% endif %}
         </div>
         <div class="px-3">
-            Grafico
+            <h6>México</h6>
         </div>
     </div>
 
     <!--Yearly Sales-->
-    <div class="metric px-3 m-4 d-flex shadow-sm p-3 mb-5 bg-warning bg-gradient rounded">
+    <div class="metric m-2 d-flex shadow p-3 mb-5 bg-body bg-gradient rounded">
         <div>
             <h6>Ventas Del Año</h6>
             <h1><b>${{year_sale|intcomma }}</b></h1>
@@ -34,11 +34,11 @@
             {% endif %}
         </div>
         <div class="px-3">
-            Grafico
+            <h6>México</h6>
         </div>
     </div>
     <!--Goals-->
-    <div class="metric px-3 m-4 shadow-sm p-3 mb-5 bg-warning bg-gradient rounded">
+    <div class="metric m-2 shadow p-3 mb-5 bg-body bg-gradient rounded">
         <div>
             <h6>Meta Mensual</h6>
             <h1><b>{{goal}}%</b></h1>
@@ -47,14 +47,15 @@
             </div>
         </div>
     </div>
-    <!--Best Seller-->
-    <div class="metric px-3 m-4 d-flex shadow-sm p-3 mb-5 bg-warning bg-gradient rounded">
+    <!--Best Seller Day-->
+    <div class="metric m-2 d-flex shadow p-3 mb-5 bg-body bg-gradient rounded">
         <div>
-            <h6>Más Vendidos</h6>
-            <table>
-                {% for key,data in best_sellers.items %}
+            <h6>Más Vendidos Hoy</h6>
+            <table class="best_sellers">
+                {% for key,data in best_sellers_day.items %}
                 <tr>
-                    <td class="d-flex"><div class="circulo"></div>{{key}}</td>
+                    <td><div class="circulo"></div></td>
+                    <td>{{key}}</td>
                     <td>${{data.value|intcomma}}</td>
                     <td>{{data.percentage}}%</td>
                 </tr>
@@ -63,7 +64,27 @@
 
         </div>
         <div class="px-3">
-            Grafico
+            <h6>México</h6>
+        </div>
+    </div>
+    <!--Best Seller Year-->
+    <div class="metric m-2 d-flex shadow p-3 mb-5 bg-body bg-gradient rounded">
+        <div>
+            <h6>Más Vendidos Este Año</h6>
+            <table class="best_sellers">
+                {% for key,data in best_sellers_year.items %}
+                <tr>
+                    <td><div class="circulo"></div></td>
+                    <td>{{key}}</td>
+                    <td>${{data.value|intcomma}}</td>
+                    <td>{{data.percentage}}%</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+        <div class="px-3">
+            <h6>México</h6>
         </div>
     </div>
 

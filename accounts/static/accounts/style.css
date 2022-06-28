@@ -5,6 +5,7 @@
     --rojo_letras: #842029;
     --rojo_claro: #F8D7DA;
     --rojo_oscuro: #f5c2c7;
+    --main-background: #f2f5f9;
 }
 
 * {
@@ -15,6 +16,9 @@
 
 html {
     font-size: 62.5%;
+}
+body{
+    background-color: var(--main-background);
 }
 
 header {
@@ -46,6 +50,7 @@ main {
 .buttons{
     margin: 1rem 0;
 }
+
 
 section {
     margin-bottom: 1rem;
@@ -204,6 +209,9 @@ form ul.cupon{
 .metric{
     flex: 1 1 0
 }
+.metric h6{
+    font-size: 1.3rem;
+}
 .circle{
     
 }
@@ -214,4 +222,8 @@ form ul.cupon{
     -moz-border-radius:50px;
     -webkit-border-radius:50px;
     border-radius:50px;
+ }
+.best_sellers td{
+    padding:0.4rem;
+    font-size: 1.1rem;
  }

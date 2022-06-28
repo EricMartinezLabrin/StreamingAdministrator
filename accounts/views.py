@@ -63,7 +63,7 @@ class DashboardView(generic.TemplateView):
         else:
             return 'success'
 
-    def get_best_sellers():
+    def get_best_sellers(day=None,year=None):
         best_seller = {
             'Netflix':{
             'value':500,
@@ -84,7 +84,8 @@ class DashboardView(generic.TemplateView):
         context['comparation'] = self.comparation
         context['goal'] = goal
         context['color'] = DashboardView.get_color(goal)
-        context['best_sellers'] = DashboardView.get_best_sellers()
+        context['best_sellers_day'] = DashboardView.get_best_sellers(day=timezone.now())
+        context['best_sellers_year'] = DashboardView.get_best_sellers(year=datetime.datetime.today().strftime('%Y'))
         return context
 
 @permission_required('accounts.view_account', raise_exception=True)
