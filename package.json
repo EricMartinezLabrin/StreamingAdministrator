@@ -1,0 +1,23 @@
+{
+  "name": "cuentas_mexico_django",
+  "version": "1.0.0",
+  "description": "Administracion de cuentas",
+  "main": "src/index.js",
+  "dependencies": {
+    "chart.js": "^3.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EricMartinezLabrin/StreamingAdministrator.git"
+  },
+  "author": "Eric Martinez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EricMartinezLabrin/StreamingAdministrator/issues"
+  },
+  "homepage": "https://github.com/EricMartinezLabrin/StreamingAdministrator#readme"
+}
