@@ -76,6 +76,17 @@ class DashboardView(generic.TemplateView):
         }
         return best_seller
 
+    def chart_data(object_data):
+        """
+        Get an object (dict), and return a list with labels
+        """
+        labels=[]
+        datas=[]
+        for label,data in object_data.items():
+            labels.append(label)
+            datas.append(list(data.values())[0])
+        return labels,datas
+
     def get_context_data(self, **kwargs):
         goal = self.goal
         context = super().get_context_data(**kwargs)
@@ -85,6 +96,8 @@ class DashboardView(generic.TemplateView):
         context['goal'] = goal
         context['color'] = DashboardView.get_color(goal)
         context['best_sellers_day'] = DashboardView.get_best_sellers(day=timezone.now())
+        context['best_sellers_day_label'] = DashboardView.chart_data(context['best_sellers_day'])[0]
+        context['best_sellers_day_data'] = DashboardView.chart_data(context['best_sellers_day'])[1]
         context['best_sellers_year'] = DashboardView.get_best_sellers(year=datetime.datetime.today().strftime('%Y'))
         return context
 

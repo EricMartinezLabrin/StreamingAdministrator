@@ -2,7 +2,7 @@
   "name": "cuentas_mexico_django",
   "version": "1.0.0",
   "description": "Administracion de cuentas",
-  "main": "src/index.js",
+  "main": "src/",
   "dependencies": {
     "chart.js": "^3.8.0"
   },
